@@ -2,6 +2,8 @@ import torch
 from transformers import Wav2Vec2Processor, Wav2Vec2Model
 import torchaudio
 from torchaudio.transforms import Resample
+from torchvision.models.video import r3d_18  # Example: using a pretrained R3D model
+from torchvision.io import read_video
 
 class MediaEmbedder:
     def __init__(self):
@@ -12,29 +14,75 @@ class MediaEmbedder:
         self.video_processor = None
         self.video_model = None
 
-    def embed_audio(self, audio_path, resample_rate=16000):
-        waveform, sample_rate = torchaudio.load(audio_path)
+    def embed_audio(self, audio_path, chunk_duration, resample_rate=16000):
+        batch_waveforms = []
+        chunk_size = resample_rate * chunk_duration  # Calculate the chunk size in samples
 
+        waveform, sample_rate = torchaudio.load(audio_path)
+        waveform=torch.mean(waveform, dim=0, keepdim=False)
         # Resample if the sample rate is different
         if sample_rate != resample_rate:
             resampler = Resample(orig_freq=sample_rate, new_freq=resample_rate)
             waveform = resampler(waveform)
+         # Segment the waveform into chunks
+        total_samples = waveform.size(0)
+        num_chunks = total_samples // chunk_size
 
-        # Process audio and generate embeddings
-        inputs = self.audio_processor(waveform.squeeze(0), sampling_rate=resample_rate, return_tensors="pt")
+        for i in range(num_chunks):
+            start = i * chunk_size
+            end = start + chunk_size
+            chunk = waveform[start:end]
+
+            # Process audio chunk
+            inputs = self.audio_processor(chunk, sampling_rate=resample_rate, return_tensors="pt")
+            processed_audio = inputs.input_values.squeeze(0)
+            if processed_audio.dim() == 2:
+                processed_audio = processed_audio.view(-1, processed_audio.size(-1))  # Flatten to [16000]
+            # Aggregate processed audio chunks for the batch
+            batch_waveforms.append(processed_audio)
+
+        # Stack all processed waveforms into a single batch tensor
+        batch_waveforms_tensor = torch.stack(batch_waveforms)
+        # Generate embeddings for the batch
         with torch.no_grad():
-            embeddings = self.audio_model(**inputs).last_hidden_state
-
+            embeddings = self.audio_model(batch_waveforms_tensor).last_hidden_state
         return embeddings
 
-    def embed_video(self, video_path, method=None):
-        # Placeholder function for video embedding
-        # The implementation will depend on the chosen video embedding method
-        # and should be modified accordingly
-        if method is None:
-            raise ValueError("Please specify the video embedding method")
+    def embed_video(self, video_path, chunk_duration, fps):
+        local_model_path ="/Users/markrademaker/Downloads/Work/Scriptie/r3d_18-b3b3357e.pth"
+        # Load the model
+        self.model = r3d_18(pretrained=False)  # Set pretrained to False
+        self.model.load_state_dict(torch.load(local_model_path))
+        self.model.eval()  # Set the model to evaluation mode
 
-        # Example: Load video, preprocess, and generate embeddings
-        # embeddings = ...
+        # Load and preprocess video
+        video, _, _ = read_video(video_path, start_pts=0, end_pts=None, pts_unit='sec')
+        
+        # Calculate the number of frames per chunk
+        chunk_frame_count = chunk_duration * fps
 
-        return embeddings
+        # Assuming the video is already at the desired fps
+        total_frames = video.shape[0]
+        num_chunks = total_frames // chunk_frame_count
+
+        embeddings = []
+
+        for i in range(num_chunks):
+            start_frame = i * chunk_frame_count
+            end_frame = start_frame + chunk_frame_count
+            video_chunk = video[start_frame:end_frame]
+
+            # Preprocess the video chunk as required by your model
+            # For example, resizing, normalizing, etc.
+            # preprocessed_chunk = preprocess_video_chunk(video_chunk)
+
+            # Generate embedding for the chunk
+            with torch.no_grad():
+                # Adjust as per your model's input requirements
+                chunk_embedding = self.video_model(video_chunk.unsqueeze(0))
+                embeddings.append(chunk_embedding)
+
+        # Concatenate all embeddings
+        embeddings_tensor = torch.cat(embeddings, dim=0)
+
+        return embeddings_tensor

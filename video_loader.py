@@ -1,5 +1,5 @@
 from moviepy.editor import VideoFileClip
-from spleeter.spleeter.separator import Separator
+#from spleeter.spleeter.separator import Separator
 class VideoLoader:
     def __init__(self, path):
         self.path = path
@@ -49,3 +49,13 @@ class VideoLoader:
 
         except Exception as e:
             print(f"Error splitting audio and video: {e}")
+
+    def extract_subpart(self, start_time, end_time, output_path):
+        if self.video_clip is None:
+            self.load_video()
+        
+        # Extract the specified part of the video
+        extracted_video = self.video_clip.subclip(start_time, end_time)
+
+        # Write the extracted part to a file
+        extracted_video.write_videofile(output_path, codec="libx264", audio_codec="aac")
