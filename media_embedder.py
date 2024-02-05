@@ -4,7 +4,7 @@ import torchaudio
 from torchaudio.transforms import Resample
 from torchvision.models.video import r3d_18  # Example: using a pretrained R3D model
 from torchvision.io import read_video
-
+"""
 class MediaEmbedder:
     def __init__(self):
         # Initialize processors and models for audio and video
@@ -86,3 +86,55 @@ class MediaEmbedder:
         embeddings_tensor = torch.cat(embeddings, dim=0)
 
         return embeddings_tensor
+"""   
+import torch
+from torch.utils.data import Dataset
+import torchaudio
+
+class AudioDataset(Dataset):
+    def __init__(self, audio_file_paths, chunk_duration, resample_rate=16000):
+        self.audio_file_paths = audio_file_paths
+        self.chunk_duration = chunk_duration
+        self.resample_rate = resample_rate
+
+    def __len__(self):
+        return len(self.audio_file_paths)
+
+    def __getitem__(self, idx):
+        audio_path = self.audio_file_paths[idx]
+        waveform, sample_rate = torchaudio.load(audio_path)
+        # Resample waveform if necessary
+        if sample_rate != self.resample_rate:
+            resampler = torchaudio.transforms.Resample(orig_freq=sample_rate, new_freq=self.resample_rate)
+            waveform = resampler(waveform)
+        waveform = torch.mean(waveform, dim=0, keepdim=True)  # Convert to mono
+        return waveform, self.resample_rate
+class MediaEmbedder:
+    def __init__(self):
+        self.audio_processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
+        self.audio_model = Wav2Vec2Model.from_pretrained("facebook/wav2vec2-base-960h")
+
+    def embed_audio(self, audio_path, chunk_duration, resample_rate=16000):
+        waveform, sample_rate = torchaudio.load(audio_path)
+        waveform = torch.mean(waveform, dim=0, keepdim=True)
+        if sample_rate != resample_rate:
+            resampler = torchaudio.transforms.Resample(orig_freq=sample_rate, new_freq=resample_rate)
+            waveform = resampler(waveform)
+        inputs = self.audio_processor(waveform, sampling_rate=resample_rate, return_tensors="pt", padding=True)
+        with torch.no_grad():
+            embeddings = self.audio_model(**inputs).last_hidden_state
+        # Pooling the embeddings could be necessary depending on your application
+        embeddings = torch.mean(embeddings, dim=1)  # Simple mean pooling
+
+        return embeddings
+    
+class EmbeddingsDataset(Dataset):
+    def __init__(self, embeddings, labels):
+        self.embeddings = embeddings
+        self.labels = labels
+    
+    def __len__(self):
+        return len(self.labels)
+    
+    def __getitem__(self, idx):
+        return self.embeddings[idx], self.labels[idx]
