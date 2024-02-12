@@ -1,0 +1,7 @@
+--2024-02-07 12:20:39--  https://thor.robots.ox.ac.uk/~vgg/data/condensed-movies/data/features.zip
+Resolving thor.robots.ox.ac.uk (thor.robots.ox.ac.uk)... 129.67.95.98
+Connecting to thor.robots.ox.ac.uk (thor.robots.ox.ac.uk)|129.67.95.98|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 9724314618 (9.1G) [application/zip]
+Saving to: '/Volumes/SeaGate/MoviesCMD/features.zip'
+
