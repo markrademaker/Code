@@ -3,13 +3,11 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { isRangeAvailable } from "@/lib/bookings";
 import { sendAdminBookingRequest, sendGuestStatusUpdate } from "@/lib/email";
+import { getCurrentUser } from "@/lib/user";
 
 export const runtime = "nodejs";
 
 const schema = z.object({
-  name: z.string().min(1).max(120),
-  email: z.string().email(),
-  phone: z.string().max(40).optional(),
   checkIn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   checkOut: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   guests: z.coerce.number().int().min(1).max(20),
@@ -17,6 +15,14 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json(
+      { error: "You need to sign in to request a booking" },
+      { status: 401 },
+    );
+  }
+
   let body: unknown;
   try {
     body = await req.json();
@@ -31,7 +37,6 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
-
   const data = parsed.data;
 
   try {
@@ -52,14 +57,15 @@ export async function POST(req: Request) {
   try {
     booking = await prisma.booking.create({
       data: {
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
         guests: data.guests,
         checkIn: new Date(data.checkIn),
         checkOut: new Date(data.checkOut),
         message: data.message,
         status: "PENDING",
+        userId: user.id,
       },
     });
   } catch (err) {
