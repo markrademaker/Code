@@ -89,6 +89,15 @@ export function NavBar() {
                 Request a booking
               </Link>
             </li>
+            <li className="mt-2 border-t border-deep/10 pt-2">
+              <Link
+                href="/admin"
+                onClick={() => setOpen(false)}
+                className="block rounded-xl px-4 py-3 text-sm font-medium text-deep/70 hover:bg-deep/5"
+              >
+                Admin sign in
+              </Link>
+            </li>
           </ul>
         </nav>
       )}
