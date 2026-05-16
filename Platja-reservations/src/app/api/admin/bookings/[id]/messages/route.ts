@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { ADMIN_COOKIE_NAME, verifySessionCookie } from "@/lib/admin-auth";
+import { sendMessageToGuest } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -46,6 +47,13 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       body: parsed.data.body,
     },
   });
+
+  try {
+    await sendMessageToGuest(booking, parsed.data.body);
+  } catch {
+    // ignore email failure — the message is saved
+  }
+
   return NextResponse.json({
     ok: true,
     message: {

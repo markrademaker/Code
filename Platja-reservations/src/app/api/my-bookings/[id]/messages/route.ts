@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/user";
+import { sendMessageToOwners } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -50,6 +51,12 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       body: parsed.data.body,
     },
   });
+
+  try {
+    await sendMessageToOwners(booking, parsed.data.body);
+  } catch {
+    // ignore email failure — the message is saved
+  }
 
   return NextResponse.json({
     ok: true,

@@ -137,3 +137,53 @@ export async function sendGuestStatusUpdate(
   });
   if (error) throw new Error(`Resend (guest email): ${error.message}`);
 }
+
+export async function sendMessageToOwners(
+  booking: Booking,
+  messageBody: string,
+): Promise<void> {
+  const base = getBaseUrl();
+  const html = `
+    <h2 style="font-family:Georgia,serif;color:#1f4a5f">${escape(booking.name)} sent you a message</h2>
+    <p style="color:#5a6b76">About their booking <strong>${fmt(booking.checkIn)} → ${fmt(booking.checkOut)}</strong>.</p>
+    <blockquote style="margin:16px 0;padding:14px 18px;background:#f5efe6;border-left:4px solid #4fa8a8;border-radius:8px;font-family:system-ui,sans-serif;white-space:pre-wrap;color:#1f4a5f">${escape(messageBody)}</blockquote>
+    <p>
+      <a href="${base}/admin" style="display:inline-block;padding:11px 22px;background:#1d6e6e;color:#fff;text-decoration:none;border-radius:9999px;font-weight:600;font-family:system-ui,sans-serif">Open in admin</a>
+    </p>
+    <p style="font-size:13px;color:#5a6b76">Just hit reply to send the answer directly to ${escape(booking.email)}, or use the message thread in the admin dashboard.</p>
+  `;
+
+  const { error } = await resend().emails.send({
+    from: from(),
+    to: getRecipients(),
+    replyTo: booking.email,
+    subject: `${booking.name} sent you a message about their booking`,
+    html,
+  });
+  if (error) throw new Error(`Resend (owner message): ${error.message}`);
+}
+
+export async function sendMessageToGuest(
+  booking: Booking,
+  messageBody: string,
+): Promise<void> {
+  const base = getBaseUrl();
+  const html = `
+    <h2 style="font-family:Georgia,serif;color:#1f4a5f">A reply about your stay</h2>
+    <p style="color:#5a6b76">From the owners of Villa Mas Nou, about your booking <strong>${fmt(booking.checkIn)} → ${fmt(booking.checkOut)}</strong>.</p>
+    <blockquote style="margin:16px 0;padding:14px 18px;background:#f5efe6;border-left:4px solid #4fa8a8;border-radius:8px;font-family:system-ui,sans-serif;white-space:pre-wrap;color:#1f4a5f">${escape(messageBody)}</blockquote>
+    <p>
+      <a href="${base}/my-bookings" style="display:inline-block;padding:11px 22px;background:#1d6e6e;color:#fff;text-decoration:none;border-radius:9999px;font-weight:600;font-family:system-ui,sans-serif">Reply in your booking</a>
+    </p>
+    <p style="font-size:13px;color:#5a6b76">Replying to this email also reaches us directly.</p>
+  `;
+
+  const { error } = await resend().emails.send({
+    from: from(),
+    to: booking.email,
+    replyTo: getRecipients()[0],
+    subject: "A reply about your booking at Villa Mas Nou",
+    html,
+  });
+  if (error) throw new Error(`Resend (guest message): ${error.message}`);
+}
