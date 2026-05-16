@@ -1,7 +1,6 @@
 import { Hero } from "@/components/Hero";
 import { VillaOverview } from "@/components/VillaOverview";
 import { Nearby } from "@/components/Nearby";
-import { Rates } from "@/components/Rates";
 import { AvailabilityCalendar } from "@/components/AvailabilityCalendar";
 import { BookingForm } from "@/components/BookingForm";
 import { getBlockingBookings } from "@/lib/bookings";
@@ -19,7 +18,6 @@ export default async function HomePage() {
       <Hero />
       <VillaOverview />
       <Nearby />
-      <Rates />
       <AvailabilityCalendar bookings={bookings} />
       <BookingForm user={user} />
       <footer className="border-t border-ink/10 bg-whitewash py-12 text-center text-sm text-ink/55">
