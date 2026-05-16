@@ -78,6 +78,13 @@ export function NavBar({ user }: { user: NavUser }) {
           >
             Book
           </Link>
+          <Link
+            href="/admin"
+            className="ml-1 rounded-full px-2.5 py-1.5 text-xs font-medium text-ink/50 hover:bg-ink/5"
+            title="Admin sign in"
+          >
+            Admin
+          </Link>
         </nav>
 
         <button
