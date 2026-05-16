@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { NavBar } from "@/components/NavBar";
+import { getCurrentUser } from "@/lib/user";
 
 export const metadata: Metadata = {
   title: "Villa Mas Nou — Platja d'Aro Reservations",
@@ -15,15 +16,17 @@ export const viewport: Viewport = {
   themeColor: "#1f4a5f",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = await getCurrentUser();
+  const navUser = user ? { name: user.name } : null;
   return (
     <html lang="en">
       <body>
-        <NavBar />
+        <NavBar user={navUser} />
         {children}
       </body>
     </html>

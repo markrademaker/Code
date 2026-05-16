@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 type Status =
@@ -8,8 +9,43 @@ type Status =
   | { kind: "success" }
   | { kind: "error"; message: string };
 
-export function BookingForm() {
+export type BookingFormUser = {
+  name: string;
+  email: string;
+  phone: string | null;
+};
+
+export function BookingForm({ user }: { user: BookingFormUser | null }) {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
+
+  if (!user) {
+    return (
+      <section id="book" className="mx-auto max-w-3xl px-5 py-14 sm:px-6 sm:py-20">
+        <h2 className="font-display text-2xl font-semibold sm:text-3xl lg:text-4xl">
+          Request a booking
+        </h2>
+        <p className="mt-3 text-base text-deep/70 sm:text-lg">
+          Create a free account so booking takes seconds next time. We&apos;ll
+          save your name, email and phone so you only have to pick dates from
+          now on.
+        </p>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <Link
+            href="/login?mode=signup&next=%2F%23book"
+            className="rounded-full bg-deep px-6 py-3 text-center font-medium text-white shadow-lg hover:bg-deep/90"
+          >
+            Create account
+          </Link>
+          <Link
+            href="/login?next=%2F%23book"
+            className="rounded-full border border-deep/20 px-6 py-3 text-center font-medium text-deep hover:bg-deep/5"
+          >
+            Sign in
+          </Link>
+        </div>
+      </section>
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -54,18 +90,27 @@ export function BookingForm() {
         Request a booking
       </h2>
       <p className="mt-3 text-base text-deep/70 sm:text-lg">
-        Fill in your dates and we&apos;ll email you back to confirm. Your
-        request is sent directly to the owners.
+        Pick your dates and we&apos;ll email you back to confirm.
       </p>
 
-      <form onSubmit={handleSubmit} className="mt-8 grid gap-5 sm:mt-10">
+      <div className="mt-6 rounded-2xl bg-white/70 p-4 text-sm text-deep/80 ring-1 ring-deep/5 sm:p-5">
+        Booking as <strong className="text-deep">{user.name}</strong>{" "}
+        <span className="text-deep/60">({user.email})</span>
+      </div>
+
+      <form onSubmit={handleSubmit} className="mt-6 grid gap-5">
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="Your name" name="name" required />
-          <Field label="Email" name="email" type="email" required />
-          <Field label="Phone (optional)" name="phone" type="tel" />
-          <Field label="Number of guests" name="guests" type="number" min={1} max={20} defaultValue={2} required />
           <Field label="Check-in" name="checkIn" type="date" required />
           <Field label="Check-out" name="checkOut" type="date" required />
+          <Field
+            label="Number of guests"
+            name="guests"
+            type="number"
+            min={1}
+            max={20}
+            defaultValue={2}
+            required
+          />
         </div>
         <label className="block">
           <span className="text-sm font-medium text-deep">Message (optional)</span>
