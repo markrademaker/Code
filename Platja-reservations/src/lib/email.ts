@@ -74,13 +74,14 @@ export async function sendAdminBookingRequest(booking: Booking): Promise<void> {
     <p style="font-size:13px;color:#5a6b76">Or open the <a href="${adminUrl}">admin dashboard</a> to view the full planning. Action links expire in 14 days.</p>
   `;
 
-  await resend().emails.send({
+  const { error } = await resend().emails.send({
     from: from(),
     to: getRecipients(),
     replyTo: booking.email,
     subject: `Booking request: ${fmt(booking.checkIn)} → ${fmt(booking.checkOut)} (${booking.name})`,
     html,
   });
+  if (error) throw new Error(`Resend (admin email): ${error.message}`);
 }
 
 export async function sendGuestStatusUpdate(
@@ -127,11 +128,12 @@ export async function sendGuestStatusUpdate(
     <p>— Villa Mas Nou, Platja d'Aro</p>
   `;
 
-  await resend().emails.send({
+  const { error } = await resend().emails.send({
     from: from(),
     to: booking.email,
     replyTo: getRecipients()[0],
     subject: m.subject,
     html,
   });
+  if (error) throw new Error(`Resend (guest email): ${error.message}`);
 }
