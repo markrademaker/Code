@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { format, parseISO } from "date-fns";
+import { MessageThread } from "@/components/MessageThread";
 
 type Booking = {
   id: string;
@@ -10,6 +11,7 @@ type Booking = {
   guests: number;
   message: string | null;
   status: "PENDING" | "TENTATIVE" | "CONFIRMED" | "DECLINED" | "CANCELLED";
+  ownerNote: string | null;
   createdAt: string;
 };
 
@@ -33,6 +35,7 @@ export function MyBookingsList({ bookings: initial }: { bookings: Booking[] }) {
   const [bookings, setBookings] = useState(initial);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(null);
 
   async function cancel(b: Booking) {
     if (!confirm(`Cancel your booking from ${b.checkIn} to ${b.checkOut}?`)) return;
@@ -65,6 +68,10 @@ export function MyBookingsList({ bookings: initial }: { bookings: Booking[] }) {
       )}
       {bookings.map((b) => {
         const closed = b.status === "CANCELLED" || b.status === "DECLINED";
+        const showOwnerNote =
+          b.ownerNote &&
+          (b.status === "CONFIRMED" || b.status === "TENTATIVE");
+        const isOpen = openId === b.id;
         return (
           <div
             key={b.id}
@@ -87,13 +94,32 @@ export function MyBookingsList({ bookings: initial }: { bookings: Booking[] }) {
                 {STATUS_LABEL[b.status]}
               </span>
             </div>
+
+            {showOwnerNote && (
+              <div className="mt-4 rounded-2xl bg-sea/10 p-4">
+                <p className="text-xs font-medium uppercase tracking-wider text-ocean">
+                  Note from the owners
+                </p>
+                <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-ink">
+                  {b.ownerNote}
+                </p>
+              </div>
+            )}
+
             {b.message && (
               <p className="mt-3 whitespace-pre-wrap rounded-2xl bg-whitewash px-4 py-3 text-sm text-ink/75">
                 {b.message}
               </p>
             )}
-            {!closed && (
-              <div className="mt-4 flex justify-end">
+
+            <div className="mt-4 flex flex-wrap justify-between gap-2">
+              <button
+                onClick={() => setOpenId(isOpen ? null : b.id)}
+                className="rounded-full bg-sand/60 px-4 py-2 text-sm font-medium text-ink hover:bg-sand"
+              >
+                {isOpen ? "Hide messages" : "Messages"}
+              </button>
+              {!closed && (
                 <button
                   onClick={() => cancel(b)}
                   disabled={busyId === b.id}
@@ -101,6 +127,12 @@ export function MyBookingsList({ bookings: initial }: { bookings: Booking[] }) {
                 >
                   {busyId === b.id ? "Cancelling…" : "Cancel booking"}
                 </button>
+              )}
+            </div>
+
+            {isOpen && (
+              <div className="mt-4">
+                <MessageThread bookingId={b.id} side="guest" />
               </div>
             )}
           </div>

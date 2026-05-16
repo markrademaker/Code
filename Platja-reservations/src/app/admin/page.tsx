@@ -16,6 +16,7 @@ export default async function AdminPage() {
     message: b.message,
     status: b.status,
     notes: b.notes,
+    ownerNote: b.ownerNote,
     createdAt: b.createdAt.toISOString(),
   }));
   return <AdminDashboard bookings={serialized} />;

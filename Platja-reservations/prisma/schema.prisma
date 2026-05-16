@@ -17,33 +17,64 @@ enum BookingStatus {
 }
 
 model User {
-  id           String    @id @default(cuid())
-  email        String    @unique
+  id           String           @id @default(cuid())
+  email        String           @unique
   passwordHash String
   name         String
   phone        String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
   bookings     Booking[]
+  messages     BookingMessage[]
 }
 
 model Booking {
-  id        String        @id @default(cuid())
-  name      String
-  email     String
-  phone     String?
-  guests    Int
-  checkIn   DateTime      @db.Date
-  checkOut  DateTime      @db.Date
-  message   String?
-  status    BookingStatus @default(PENDING)
-  notes     String?
-  userId    String?
-  user      User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id          String           @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  guests      Int
+  checkIn     DateTime         @db.Date
+  checkOut    DateTime         @db.Date
+  message     String?
+  status      BookingStatus    @default(PENDING)
+  notes       String?
+  ownerNote   String?
+  userId      String?
+  user        User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  messages    BookingMessage[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 
   @@index([status])
   @@index([checkIn, checkOut])
   @@index([userId])
+}
+
+model BookingMessage {
+  id         String   @id @default(cuid())
+  bookingId  String
+  booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  authorId   String?
+  author     User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  fromOwner  Boolean  @default(false)
+  authorName String
+  body       String
+  createdAt  DateTime @default(now())
+
+  @@index([bookingId])
+}
+
+model Restaurant {
+  id        String   @id @default(cuid())
+  name      String
+  website   String?
+  phone     String?
+  area      String?
+  blurb     String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sortOrder])
 }

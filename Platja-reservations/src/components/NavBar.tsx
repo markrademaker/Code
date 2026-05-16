@@ -8,6 +8,8 @@ const LINKS = [
   { href: "/", label: "Villa" },
   { href: "/photos", label: "Photos" },
   { href: "/weather", label: "Weather" },
+  { href: "/restaurants", label: "Eat" },
+  { href: "/house-rules", label: "House rules" },
 ];
 
 export type NavUser = { name: string } | null;

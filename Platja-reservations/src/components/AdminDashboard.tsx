@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { format, parseISO } from "date-fns";
 import { AdminPlanningCalendar } from "@/components/AdminPlanningCalendar";
+import { MessageThread } from "@/components/MessageThread";
 
 export type AdminBooking = {
   id: string;
@@ -15,6 +17,7 @@ export type AdminBooking = {
   message: string | null;
   status: "PENDING" | "TENTATIVE" | "CONFIRMED" | "DECLINED" | "CANCELLED";
   notes: string | null;
+  ownerNote: string | null;
   createdAt: string;
 };
 
@@ -41,6 +44,7 @@ export function AdminDashboard({ bookings: initial }: { bookings: AdminBooking[]
   const [bookings, setBookings] = useState(initial);
   const [filter, setFilter] = useState<Filter>("Active");
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [openChatId, setOpenChatId] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -90,7 +94,13 @@ export function AdminDashboard({ bookings: initial }: { bookings: AdminBooking[]
 
   async function saveEdit(
     b: AdminBooking,
-    changes: { checkIn: string; checkOut: string; status: AdminBooking["status"]; notes: string },
+    changes: {
+      checkIn: string;
+      checkOut: string;
+      status: AdminBooking["status"];
+      notes: string;
+      ownerNote: string;
+    },
   ): Promise<void> {
     const ok = await patch(b.id, changes);
     if (ok) {
@@ -116,15 +126,23 @@ export function AdminDashboard({ bookings: initial }: { bookings: AdminBooking[]
     <main className="mx-auto max-w-6xl px-5 py-8 sm:px-6 sm:py-12">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-[0.25em] text-deep/60">Admin</p>
+          <p className="text-xs uppercase tracking-[0.25em] text-ink/60">Admin</p>
           <h1 className="mt-1 font-display text-3xl font-semibold sm:text-4xl">Planning</h1>
         </div>
-        <button
-          onClick={logout}
-          className="rounded-full bg-white px-4 py-2 text-sm font-medium shadow-sm ring-1 ring-deep/10 hover:bg-deep/5"
-        >
-          Sign out
-        </button>
+        <div className="flex gap-2">
+          <Link
+            href="/admin/restaurants"
+            className="rounded-full bg-white px-4 py-2 text-sm font-medium shadow-soft ring-1 ring-ink/10 hover:bg-ink/5"
+          >
+            Restaurants
+          </Link>
+          <button
+            onClick={logout}
+            className="rounded-full bg-white px-4 py-2 text-sm font-medium shadow-soft ring-1 ring-ink/10 hover:bg-ink/5"
+          >
+            Sign out
+          </button>
+        </div>
       </div>
 
       <AdminPlanningCalendar bookings={bookings} />
@@ -192,6 +210,14 @@ export function AdminDashboard({ bookings: initial }: { bookings: AdminBooking[]
                   </p>
                 )}
 
+                {b.ownerNote && (
+                  <p className="mt-3 whitespace-pre-wrap rounded-xl bg-sea/10 px-4 py-3 text-sm text-ocean">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider">Note to guest</span>
+                    <br />
+                    {b.ownerNote}
+                  </p>
+                )}
+
                 {editing ? (
                   <EditForm
                     booking={b}
@@ -220,11 +246,20 @@ export function AdminDashboard({ bookings: initial }: { bookings: AdminBooking[]
                       </ActionBtn>
                     )}
                     <ActionBtn onClick={() => setEditingId(b.id)} disabled={busyId === b.id}>
-                      Edit / move
+                      Edit / note
+                    </ActionBtn>
+                    <ActionBtn onClick={() => setOpenChatId(openChatId === b.id ? null : b.id)} disabled={busyId === b.id}>
+                      {openChatId === b.id ? "Hide messages" : "Messages"}
                     </ActionBtn>
                     <ActionBtn onClick={() => remove(b)} variant="ghost" disabled={busyId === b.id}>
                       Delete
                     </ActionBtn>
+                  </div>
+                )}
+
+                {openChatId === b.id && (
+                  <div className="mt-4">
+                    <MessageThread bookingId={b.id} side="owner" />
                   </div>
                 )}
               </li>
@@ -275,40 +310,47 @@ function EditForm({
   booking: AdminBooking;
   busy: boolean;
   onCancel: () => void;
-  onSave: (changes: { checkIn: string; checkOut: string; status: AdminBooking["status"]; notes: string }) => void;
+  onSave: (changes: {
+    checkIn: string;
+    checkOut: string;
+    status: AdminBooking["status"];
+    notes: string;
+    ownerNote: string;
+  }) => void;
 }) {
   const [checkIn, setCheckIn] = useState(booking.checkIn);
   const [checkOut, setCheckOut] = useState(booking.checkOut);
   const [status, setStatus] = useState<AdminBooking["status"]>(booking.status);
   const [notes, setNotes] = useState(booking.notes ?? "");
+  const [ownerNote, setOwnerNote] = useState(booking.ownerNote ?? "");
 
   return (
     <div className="mt-4 grid gap-3 rounded-xl bg-sand/60 p-4">
       <div className="grid gap-3 sm:grid-cols-3">
         <label className="block">
-          <span className="text-xs font-medium text-deep/70">Check-in</span>
+          <span className="text-xs font-medium text-ink/70">Check-in</span>
           <input
             type="date"
             value={checkIn}
             onChange={(e) => setCheckIn(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-deep/15 bg-white px-3 py-2"
+            className="mt-1 w-full rounded-lg border border-ink/15 bg-white px-3 py-2"
           />
         </label>
         <label className="block">
-          <span className="text-xs font-medium text-deep/70">Check-out</span>
+          <span className="text-xs font-medium text-ink/70">Check-out</span>
           <input
             type="date"
             value={checkOut}
             onChange={(e) => setCheckOut(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-deep/15 bg-white px-3 py-2"
+            className="mt-1 w-full rounded-lg border border-ink/15 bg-white px-3 py-2"
           />
         </label>
         <label className="block">
-          <span className="text-xs font-medium text-deep/70">Status</span>
+          <span className="text-xs font-medium text-ink/70">Status</span>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value as AdminBooking["status"])}
-            className="mt-1 w-full rounded-lg border border-deep/15 bg-white px-3 py-2"
+            className="mt-1 w-full rounded-lg border border-ink/15 bg-white px-3 py-2"
           >
             {STATUS_OPTIONS.map((s) => (
               <option key={s} value={s}>
@@ -319,12 +361,24 @@ function EditForm({
         </label>
       </div>
       <label className="block">
-        <span className="text-xs font-medium text-deep/70">Notes (private)</span>
+        <span className="text-xs font-medium text-ocean">
+          Note to guest (shown on their booking when accepted)
+        </span>
+        <textarea
+          value={ownerNote}
+          onChange={(e) => setOwnerNote(e.target.value)}
+          rows={3}
+          placeholder="e.g. Gate code is 4421. Wi-Fi password is on the fridge. We'll leave the keys in the lockbox by the door."
+          className="mt-1 w-full rounded-lg border border-sea/30 bg-white px-3 py-2"
+        />
+      </label>
+      <label className="block">
+        <span className="text-xs font-medium text-ink/70">Notes (private — guest doesn&apos;t see)</span>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
-          className="mt-1 w-full rounded-lg border border-deep/15 bg-white px-3 py-2"
+          className="mt-1 w-full rounded-lg border border-ink/15 bg-white px-3 py-2"
         />
       </label>
       <div className="flex justify-end gap-2">
@@ -332,7 +386,7 @@ function EditForm({
           Cancel
         </ActionBtn>
         <ActionBtn
-          onClick={() => onSave({ checkIn, checkOut, status, notes })}
+          onClick={() => onSave({ checkIn, checkOut, status, notes, ownerNote })}
           variant="primary"
           disabled={busy}
         >
