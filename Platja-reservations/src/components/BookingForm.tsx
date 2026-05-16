@@ -13,8 +13,9 @@ export function BookingForm() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = e.currentTarget;
     setStatus({ kind: "submitting" });
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(form);
     const payload = Object.fromEntries(formData.entries());
 
     try {
@@ -38,7 +39,7 @@ export function BookingForm() {
         return;
       }
       setStatus({ kind: "success" });
-      e.currentTarget.reset();
+      form.reset();
     } catch (err) {
       const message = err instanceof Error ? err.message : "Network error";
       setStatus({ kind: "error", message });
