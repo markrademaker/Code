@@ -19,6 +19,8 @@ export function NavBar({ user }: { user: NavUser }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
+  if (pathname === "/login") return null;
+
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
     setOpen(false);
