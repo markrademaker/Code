@@ -1,0 +1,78 @@
+export type DailyForecast = {
+  date: string;
+  highC: number;
+  lowC: number;
+  precipitationMm: number;
+  weatherCode: number;
+};
+
+export type CurrentWeather = {
+  temperatureC: number;
+  weatherCode: number;
+};
+
+export type Forecast = {
+  current: CurrentWeather;
+  daily: DailyForecast[];
+};
+
+// Platja d'Aro, Costa Brava, Spain
+const LAT = 41.817;
+const LON = 3.067;
+
+export async function fetchForecast(): Promise<Forecast | null> {
+  const url = new URL("https://api.open-meteo.com/v1/forecast");
+  url.searchParams.set("latitude", String(LAT));
+  url.searchParams.set("longitude", String(LON));
+  url.searchParams.set("current", "temperature_2m,weather_code");
+  url.searchParams.set(
+    "daily",
+    "temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code",
+  );
+  url.searchParams.set("timezone", "Europe/Madrid");
+  url.searchParams.set("forecast_days", "7");
+
+  try {
+    const res = await fetch(url, { next: { revalidate: 1800 } });
+    if (!res.ok) return null;
+    const data = (await res.json()) as {
+      current: { temperature_2m: number; weather_code: number };
+      daily: {
+        time: string[];
+        temperature_2m_max: number[];
+        temperature_2m_min: number[];
+        precipitation_sum: number[];
+        weather_code: number[];
+      };
+    };
+    return {
+      current: {
+        temperatureC: data.current.temperature_2m,
+        weatherCode: data.current.weather_code,
+      },
+      daily: data.daily.time.map((date, i) => ({
+        date,
+        highC: data.daily.temperature_2m_max[i],
+        lowC: data.daily.temperature_2m_min[i],
+        precipitationMm: data.daily.precipitation_sum[i],
+        weatherCode: data.daily.weather_code[i],
+      })),
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function describeWeatherCode(code: number): { label: string; icon: string } {
+  if (code === 0) return { label: "Clear", icon: "☀️" };
+  if (code <= 2) return { label: "Mostly sunny", icon: "🌤️" };
+  if (code === 3) return { label: "Overcast", icon: "☁️" };
+  if (code === 45 || code === 48) return { label: "Fog", icon: "🌫️" };
+  if (code >= 51 && code <= 57) return { label: "Drizzle", icon: "🌦️" };
+  if (code >= 61 && code <= 67) return { label: "Rain", icon: "🌧️" };
+  if (code >= 71 && code <= 77) return { label: "Snow", icon: "🌨️" };
+  if (code >= 80 && code <= 82) return { label: "Showers", icon: "🌦️" };
+  if (code >= 85 && code <= 86) return { label: "Snow showers", icon: "🌨️" };
+  if (code >= 95) return { label: "Thunderstorm", icon: "⛈️" };
+  return { label: "—", icon: "🌡️" };
+}
