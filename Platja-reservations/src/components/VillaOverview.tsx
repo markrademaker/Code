@@ -1,40 +1,48 @@
 const features = [
-  { title: "4 bedrooms", description: "Sleeps up to 8 guests comfortably" },
-  { title: "Private pool", description: "Sun terrace with sea views" },
-  { title: "Mas Nou", description: "Quiet residential area in the hills" },
-  { title: "5 min to beach", description: "Short drive to Platja d'Aro" },
-  { title: "Golf nearby", description: "Adjacent to the Mas Nou golf club" },
-  { title: "Fully equipped", description: "Kitchen, BBQ, Wi-Fi, parking" },
+  { title: "Private pool", description: "Sun terrace, sea views, day beds" },
+  { title: "4 bedrooms", description: "Sleeps 8 comfortably" },
+  { title: "Open kitchen", description: "Fully equipped, BBQ, alfresco dining" },
+  { title: "Mas Nou", description: "Quiet hillside neighbourhood" },
+  { title: "Golf next door", description: "On the Mas Nou golf course" },
+  { title: "Fast Wi-Fi", description: "Work from the terrace if you must" },
 ];
 
 export function VillaOverview() {
   return (
-    <section id="overview" className="mx-auto max-w-6xl px-5 py-14 sm:px-6 sm:py-20">
-      <div className="grid gap-10 md:grid-cols-2 md:items-center md:gap-12">
+    <section
+      id="overview"
+      className="mx-auto max-w-6xl px-5 pt-24 sm:px-6 sm:pt-32 sm:pb-16 pb-12"
+    >
+      <div className="grid gap-12 md:grid-cols-2 md:items-start md:gap-16">
         <div>
-          <h2 className="font-display text-2xl font-semibold sm:text-3xl lg:text-4xl">
+          <p className="text-xs uppercase tracking-[0.2em] text-ink/55">
             The villa
+          </p>
+          <h2 className="mt-2 font-display text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">
+            White walls, pine, and the bay below
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-deep/80 sm:text-lg">
+          <p className="mt-5 text-base leading-relaxed text-ink/75 sm:text-lg">
             Our family villa sits in Mas Nou, a calm residential neighbourhood
             on the hillside above Platja d&apos;Aro. From the terrace you look
-            out over pine forests and the bay. It&apos;s a great base for
-            exploring the Costa Brava — from coves and beaches to the medieval
-            towns of the Empordà.
+            out over umbrella pines and the Mediterranean. It&apos;s a great
+            base for exploring the Costa Brava — from coves and beaches to the
+            medieval towns of the Empordà.
           </p>
-          <p className="mt-4 text-base leading-relaxed text-deep/80 sm:text-lg">
-            We rent it out to friends, family and a small number of guests each
+          <p className="mt-4 text-base leading-relaxed text-ink/75 sm:text-lg">
+            We rent it to friends, family and a small number of guests each
             year. Reach out with your dates and we&apos;ll confirm by email.
           </p>
         </div>
-        <ul className="grid grid-cols-2 gap-3 sm:gap-4">
-          {features.map((f) => (
+        <ul className="grid grid-cols-2 gap-3">
+          {features.map((f, i) => (
             <li
               key={f.title}
-              className="rounded-2xl bg-white/70 p-4 shadow-sm ring-1 ring-deep/5 sm:p-5"
+              className={`rounded-2xl bg-white p-5 shadow-soft ring-1 ring-ink/5 ${
+                i % 3 === 0 ? "" : ""
+              }`}
             >
-              <p className="font-semibold text-deep">{f.title}</p>
-              <p className="mt-1 text-sm text-deep/70">{f.description}</p>
+              <p className="font-semibold text-ink">{f.title}</p>
+              <p className="mt-1 text-sm text-ink/65">{f.description}</p>
             </li>
           ))}
         </ul>

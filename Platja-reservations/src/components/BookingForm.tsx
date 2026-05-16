@@ -20,28 +20,30 @@ export function BookingForm({ user }: { user: BookingFormUser | null }) {
 
   if (!user) {
     return (
-      <section id="book" className="mx-auto max-w-3xl px-5 py-14 sm:px-6 sm:py-20">
-        <h2 className="font-display text-2xl font-semibold sm:text-3xl lg:text-4xl">
-          Request a booking
-        </h2>
-        <p className="mt-3 text-base text-deep/70 sm:text-lg">
-          Create a free account so booking takes seconds next time. We&apos;ll
-          save your name, email and phone so you only have to pick dates from
-          now on.
-        </p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <Link
-            href="/login?mode=signup&next=%2F%23book"
-            className="rounded-full bg-deep px-6 py-3 text-center font-medium text-white shadow-lg hover:bg-deep/90"
-          >
-            Create account
-          </Link>
-          <Link
-            href="/login?next=%2F%23book"
-            className="rounded-full border border-deep/20 px-6 py-3 text-center font-medium text-deep hover:bg-deep/5"
-          >
-            Sign in
-          </Link>
+      <section id="book" className="mx-auto max-w-3xl px-5 py-16 sm:px-6 sm:py-24">
+        <div className="rounded-3xl bg-white p-8 shadow-soft ring-1 ring-ink/5 sm:p-10">
+          <p className="text-xs uppercase tracking-[0.2em] text-ink/55">Request a booking</p>
+          <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
+            Sign in to book in seconds
+          </h2>
+          <p className="mt-3 text-base text-ink/70 sm:text-lg">
+            We&apos;ll save your name, email and phone so you only pick the
+            dates next time.
+          </p>
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+            <Link
+              href="/login?mode=signup&next=%2F%23book"
+              className="rounded-full bg-ocean px-7 py-3.5 text-center font-medium text-whitewash shadow-glow hover:bg-ocean/90"
+            >
+              Create account
+            </Link>
+            <Link
+              href="/login?next=%2F%23book"
+              className="rounded-full border border-ink/15 px-7 py-3.5 text-center font-medium text-ink hover:bg-whitewash"
+            >
+              Sign in
+            </Link>
+          </div>
         </div>
       </section>
     );
@@ -85,17 +87,26 @@ export function BookingForm({ user }: { user: BookingFormUser | null }) {
   const submitting = status.kind === "submitting";
 
   return (
-    <section id="book" className="mx-auto max-w-3xl px-5 py-14 sm:px-6 sm:py-20">
-      <h2 className="font-display text-2xl font-semibold sm:text-3xl lg:text-4xl">
-        Request a booking
+    <section id="book" className="mx-auto max-w-3xl px-5 py-16 sm:px-6 sm:py-24">
+      <p className="text-xs uppercase tracking-[0.2em] text-ink/55">Booking</p>
+      <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
+        Request your dates
       </h2>
-      <p className="mt-3 text-base text-deep/70 sm:text-lg">
-        Pick your dates and we&apos;ll email you back to confirm.
+      <p className="mt-3 text-base text-ink/70 sm:text-lg">
+        Pick check-in and check-out and we&apos;ll email you back to confirm.
       </p>
 
-      <div className="mt-6 rounded-2xl bg-white/70 p-4 text-sm text-deep/80 ring-1 ring-deep/5 sm:p-5">
-        Booking as <strong className="text-deep">{user.name}</strong>{" "}
-        <span className="text-deep/60">({user.email})</span>
+      <div className="mt-7 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-4 text-sm shadow-soft ring-1 ring-ink/5 sm:p-5">
+        <div className="text-ink/80">
+          Booking as <strong className="text-ink">{user.name}</strong>{" "}
+          <span className="text-ink/55">({user.email})</span>
+        </div>
+        <Link
+          href="/my-bookings"
+          className="text-xs font-medium text-ocean hover:underline"
+        >
+          My bookings →
+        </Link>
       </div>
 
       <form onSubmit={handleSubmit} className="mt-6 grid gap-5">
@@ -113,11 +124,11 @@ export function BookingForm({ user }: { user: BookingFormUser | null }) {
           />
         </div>
         <label className="block">
-          <span className="text-sm font-medium text-deep">Message (optional)</span>
+          <span className="text-sm font-medium text-ink">Message (optional)</span>
           <textarea
             name="message"
             rows={4}
-            className="mt-1 w-full rounded-xl border border-deep/15 bg-white px-4 py-3 text-deep shadow-sm focus:border-sea focus:outline-none focus:ring-2 focus:ring-sea/30"
+            className="mt-1 w-full rounded-2xl border border-ink/15 bg-white px-4 py-3 text-ink shadow-soft focus:border-sea focus:outline-none focus:ring-2 focus:ring-sea/30"
             placeholder="Anything we should know — kids, dietary, arrival time…"
           />
         </label>
@@ -125,18 +136,18 @@ export function BookingForm({ user }: { user: BookingFormUser | null }) {
         <button
           type="submit"
           disabled={submitting}
-          className="mt-2 w-full rounded-full bg-deep px-8 py-4 font-medium text-white shadow-lg transition hover:bg-deep/90 disabled:opacity-60 sm:w-auto sm:self-start sm:py-3"
+          className="mt-2 w-full rounded-full bg-ocean px-8 py-4 font-medium text-whitewash shadow-glow transition hover:bg-ocean/90 disabled:opacity-60 sm:w-auto sm:self-start sm:py-3.5"
         >
           {submitting ? "Sending…" : "Send booking request"}
         </button>
 
         {status.kind === "success" && (
-          <p className="rounded-xl bg-sea/10 px-4 py-3 text-sea">
+          <p className="rounded-2xl bg-sea/15 px-4 py-3 text-ocean">
             Thanks! Your request was sent. We&apos;ll reply by email shortly.
           </p>
         )}
         {status.kind === "error" && (
-          <p className="rounded-xl bg-terracotta/10 px-4 py-3 text-terracotta">
+          <p className="rounded-2xl bg-terracotta/10 px-4 py-3 text-terracotta">
             {status.message}
           </p>
         )}
@@ -164,7 +175,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium text-deep">{label}</span>
+      <span className="text-sm font-medium text-ink">{label}</span>
       <input
         name={name}
         type={type}
@@ -172,7 +183,7 @@ function Field({
         min={min}
         max={max}
         defaultValue={defaultValue}
-        className="mt-1 w-full rounded-xl border border-deep/15 bg-white px-4 py-3 text-deep shadow-sm focus:border-sea focus:outline-none focus:ring-2 focus:ring-sea/30"
+        className="mt-1 w-full rounded-2xl border border-ink/15 bg-white px-4 py-3 text-ink shadow-soft focus:border-sea focus:outline-none focus:ring-2 focus:ring-sea/30"
       />
     </label>
   );
