@@ -1,5 +1,7 @@
 import { Hero } from "@/components/Hero";
 import { VillaOverview } from "@/components/VillaOverview";
+import { Nearby } from "@/components/Nearby";
+import { Rates } from "@/components/Rates";
 import { AvailabilityCalendar } from "@/components/AvailabilityCalendar";
 import { BookingForm } from "@/components/BookingForm";
 import { getBlockingBookings } from "@/lib/bookings";
@@ -16,10 +18,14 @@ export default async function HomePage() {
     <main>
       <Hero />
       <VillaOverview />
+      <Nearby />
+      <Rates />
       <AvailabilityCalendar bookings={bookings} />
       <BookingForm user={user} />
-      <footer className="border-t border-deep/10 bg-white/60 py-10 text-center text-sm text-deep/60">
-        © {new Date().getFullYear()} Villa Mas Nou · Platja d&apos;Aro
+      <footer className="border-t border-ink/10 bg-whitewash py-12 text-center text-sm text-ink/55">
+        <p className="font-display text-lg text-ink/70">Villa Mas Nou</p>
+        <p className="mt-1">Platja d&apos;Aro · Costa Brava</p>
+        <p className="mt-3 text-xs">© {new Date().getFullYear()}</p>
       </footer>
     </main>
   );

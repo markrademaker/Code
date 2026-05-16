@@ -24,9 +24,9 @@ export function NavBar({ user }: { user: NavUser }) {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-deep/10 bg-sand/90 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3 sm:px-6">
-        <Link href="/" className="font-display text-lg font-semibold text-deep">
+    <header className="sticky top-0 z-30 border-b border-ink/5 bg-whitewash/80 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5 sm:px-6">
+        <Link href="/" className="font-display text-lg font-semibold text-ink">
           Villa Mas Nou
         </Link>
 
@@ -38,7 +38,7 @@ export function NavBar({ user }: { user: NavUser }) {
                 key={l.href}
                 href={l.href}
                 className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                  active ? "bg-deep text-white" : "text-deep hover:bg-deep/10"
+                  active ? "bg-ink text-whitewash" : "text-ink hover:bg-ink/5"
                 }`}
               >
                 {l.label}
@@ -47,10 +47,15 @@ export function NavBar({ user }: { user: NavUser }) {
           })}
           {user ? (
             <>
-              <span className="ml-2 text-sm text-deep/70">Hi, {user.name.split(" ")[0]}</span>
+              <Link
+                href="/my-bookings"
+                className="ml-2 rounded-full px-3 py-2 text-sm font-medium text-ink hover:bg-ink/5"
+              >
+                My bookings
+              </Link>
               <button
                 onClick={logout}
-                className="rounded-full px-3 py-2 text-sm text-deep/60 hover:bg-deep/5"
+                className="rounded-full px-3 py-2 text-sm text-ink/60 hover:bg-ink/5"
               >
                 Sign out
               </button>
@@ -58,14 +63,14 @@ export function NavBar({ user }: { user: NavUser }) {
           ) : (
             <Link
               href="/login"
-              className="rounded-full px-4 py-2 text-sm font-medium text-deep hover:bg-deep/10"
+              className="rounded-full px-4 py-2 text-sm font-medium text-ink hover:bg-ink/5"
             >
               Sign in
             </Link>
           )}
           <Link
             href="/#book"
-            className="ml-1 rounded-full bg-terracotta px-4 py-2 text-sm font-medium text-white hover:bg-terracotta/90"
+            className="ml-1 rounded-full bg-ocean px-5 py-2 text-sm font-medium text-whitewash shadow-glow hover:bg-ocean/90"
           >
             Book
           </Link>
@@ -75,23 +80,23 @@ export function NavBar({ user }: { user: NavUser }) {
           aria-label="Open menu"
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-deep/10 sm:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-soft ring-1 ring-ink/10 sm:hidden"
         >
           <span className="sr-only">Menu</span>
           <div className="space-y-1">
-            <span className="block h-0.5 w-5 bg-deep"></span>
-            <span className="block h-0.5 w-5 bg-deep"></span>
-            <span className="block h-0.5 w-5 bg-deep"></span>
+            <span className="block h-0.5 w-5 bg-ink"></span>
+            <span className="block h-0.5 w-5 bg-ink"></span>
+            <span className="block h-0.5 w-5 bg-ink"></span>
           </div>
         </button>
       </div>
 
       {open && (
-        <nav className="border-t border-deep/10 bg-sand sm:hidden">
+        <nav className="border-t border-ink/10 bg-whitewash sm:hidden">
           <ul className="mx-auto flex max-w-6xl flex-col px-5 py-2">
             {user && (
-              <li className="px-4 py-3 text-sm text-deep/70">
-                Signed in as <strong className="text-deep">{user.name}</strong>
+              <li className="px-4 py-3 text-sm text-ink/70">
+                Signed in as <strong className="text-ink">{user.name}</strong>
               </li>
             )}
             {LINKS.map((l) => {
@@ -102,7 +107,7 @@ export function NavBar({ user }: { user: NavUser }) {
                     href={l.href}
                     onClick={() => setOpen(false)}
                     className={`block rounded-xl px-4 py-3 text-base font-medium ${
-                      active ? "bg-deep text-white" : "text-deep hover:bg-deep/10"
+                      active ? "bg-ink text-whitewash" : "text-ink hover:bg-ink/5"
                     }`}
                   >
                     {l.label}
@@ -110,38 +115,47 @@ export function NavBar({ user }: { user: NavUser }) {
                 </li>
               );
             })}
+            {user && (
+              <li>
+                <Link
+                  href="/my-bookings"
+                  onClick={() => setOpen(false)}
+                  className="block rounded-xl px-4 py-3 text-base font-medium text-ink hover:bg-ink/5"
+                >
+                  My bookings
+                </Link>
+              </li>
+            )}
             <li>
               <Link
                 href="/#book"
                 onClick={() => setOpen(false)}
-                className="mt-1 block rounded-xl bg-terracotta px-4 py-3 text-base font-medium text-white"
+                className="mt-1 block rounded-xl bg-ocean px-4 py-3 text-base font-medium text-whitewash"
               >
                 Request a booking
               </Link>
             </li>
-            <li className="mt-2 border-t border-deep/10 pt-2">
+            <li className="mt-2 border-t border-ink/10 pt-2">
               {user ? (
                 <button
                   onClick={logout}
-                  className="block w-full rounded-xl px-4 py-3 text-left text-sm font-medium text-deep/70 hover:bg-deep/5"
+                  className="block w-full rounded-xl px-4 py-3 text-left text-sm font-medium text-ink/70 hover:bg-ink/5"
                 >
                   Sign out
                 </button>
               ) : (
-                <>
-                  <Link
-                    href="/login"
-                    onClick={() => setOpen(false)}
-                    className="block rounded-xl px-4 py-3 text-sm font-medium text-deep/80 hover:bg-deep/5"
-                  >
-                    Sign in / Create account
-                  </Link>
-                </>
+                <Link
+                  href="/login"
+                  onClick={() => setOpen(false)}
+                  className="block rounded-xl px-4 py-3 text-sm font-medium text-ink/80 hover:bg-ink/5"
+                >
+                  Sign in / Create account
+                </Link>
               )}
               <Link
                 href="/admin"
                 onClick={() => setOpen(false)}
-                className="block rounded-xl px-4 py-3 text-xs font-medium text-deep/50 hover:bg-deep/5"
+                className="block rounded-xl px-4 py-3 text-xs font-medium text-ink/50 hover:bg-ink/5"
               >
                 Admin sign in
               </Link>
