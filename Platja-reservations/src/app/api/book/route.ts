@@ -34,25 +34,40 @@ export async function POST(req: Request) {
 
   const data = parsed.data;
 
-  if (!(await isRangeAvailable(data.checkIn, data.checkOut))) {
+  try {
+    if (!(await isRangeAvailable(data.checkIn, data.checkOut))) {
+      return NextResponse.json(
+        { error: "Those dates are not available" },
+        { status: 409 },
+      );
+    }
+  } catch (err) {
     return NextResponse.json(
-      { error: "Those dates are not available" },
-      { status: 409 },
+      { error: `Database error: ${err instanceof Error ? err.message : "unknown"}` },
+      { status: 500 },
     );
   }
 
-  const booking = await prisma.booking.create({
-    data: {
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      guests: data.guests,
-      checkIn: new Date(data.checkIn),
-      checkOut: new Date(data.checkOut),
-      message: data.message,
-      status: "PENDING",
-    },
-  });
+  let booking;
+  try {
+    booking = await prisma.booking.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        guests: data.guests,
+        checkIn: new Date(data.checkIn),
+        checkOut: new Date(data.checkOut),
+        message: data.message,
+        status: "PENDING",
+      },
+    });
+  } catch (err) {
+    return NextResponse.json(
+      { error: `Could not save booking: ${err instanceof Error ? err.message : "unknown"}` },
+      { status: 500 },
+    );
+  }
 
   try {
     await Promise.all([

@@ -23,9 +23,18 @@ export function BookingForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const json = await res.json();
+      const text = await res.text();
+      let json: { error?: string; ok?: boolean; warning?: string } = {};
+      try {
+        json = text ? JSON.parse(text) : {};
+      } catch {
+        json = { error: text.slice(0, 200) || `Server returned ${res.status}` };
+      }
       if (!res.ok) {
-        setStatus({ kind: "error", message: json.error ?? "Something went wrong" });
+        setStatus({
+          kind: "error",
+          message: json.error ?? `Server error (${res.status})`,
+        });
         return;
       }
       setStatus({ kind: "success" });
