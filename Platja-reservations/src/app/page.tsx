@@ -1,4 +1,5 @@
 import { Hero } from "@/components/Hero";
+import { TodayAtVilla } from "@/components/TodayAtVilla";
 import { VillaOverview } from "@/components/VillaOverview";
 import { Nearby } from "@/components/Nearby";
 import { AvailabilityCalendar } from "@/components/AvailabilityCalendar";
@@ -16,10 +17,11 @@ export default async function HomePage() {
   return (
     <main>
       <Hero />
+      <TodayAtVilla />
       <VillaOverview />
-      <Nearby />
       <AvailabilityCalendar bookings={bookings} />
       <BookingForm user={user} />
+      <Nearby />
       <footer className="border-t border-ink/10 bg-whitewash py-12 text-center text-sm text-ink/55">
         <p className="font-display text-lg text-ink/70">Villa Mas Nou</p>
         <p className="mt-1">Platja d&apos;Aro · Costa Brava</p>

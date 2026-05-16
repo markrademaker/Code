@@ -22,6 +22,7 @@ const patchSchema = z.object({
   checkIn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   checkOut: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   notes: z.string().max(2000).nullable().optional(),
+  ownerNote: z.string().max(4000).nullable().optional(),
   notifyGuest: z.boolean().optional(),
 });
 
@@ -63,6 +64,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       checkIn: newCheckIn,
       checkOut: newCheckOut,
       notes: parsed.data.notes === undefined ? current.notes : parsed.data.notes,
+      ownerNote:
+        parsed.data.ownerNote === undefined ? current.ownerNote : parsed.data.ownerNote,
     },
   });
 

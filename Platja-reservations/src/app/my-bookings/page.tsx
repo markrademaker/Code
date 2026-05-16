@@ -28,6 +28,7 @@ export default async function MyBookingsPage() {
     guests: b.guests,
     message: b.message,
     status: b.status,
+    ownerNote: b.ownerNote,
     createdAt: b.createdAt.toISOString(),
   }));
 
