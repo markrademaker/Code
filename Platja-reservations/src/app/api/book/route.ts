@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { prisma } from "@/lib/db";
 import { isRangeAvailable } from "@/lib/bookings";
-import { sendBookingEmail } from "@/lib/email";
+import { sendAdminBookingRequest, sendGuestStatusUpdate } from "@/lib/email";
+
+export const runtime = "nodejs";
 
 const schema = z.object({
   name: z.string().min(1).max(120),
@@ -31,20 +34,36 @@ export async function POST(req: Request) {
 
   const data = parsed.data;
 
-  if (!isRangeAvailable(data.checkIn, data.checkOut)) {
+  if (!(await isRangeAvailable(data.checkIn, data.checkOut))) {
     return NextResponse.json(
       { error: "Those dates are not available" },
       { status: 409 },
     );
   }
 
+  const booking = await prisma.booking.create({
+    data: {
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      guests: data.guests,
+      checkIn: new Date(data.checkIn),
+      checkOut: new Date(data.checkOut),
+      message: data.message,
+      status: "PENDING",
+    },
+  });
+
   try {
-    await sendBookingEmail(data);
+    await Promise.all([
+      sendAdminBookingRequest(booking),
+      sendGuestStatusUpdate(booking, null),
+    ]);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json(
-      { error: `Failed to send booking email: ${message}` },
-      { status: 500 },
+      { ok: true, warning: `Booking saved but email failed: ${message}` },
+      { status: 202 },
     );
   }
 

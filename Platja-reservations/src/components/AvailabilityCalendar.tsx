@@ -15,7 +15,7 @@ import {
   isBefore,
   startOfDay,
 } from "date-fns";
-import type { Booking } from "@/lib/bookings";
+import type { PublicBooking as Booking } from "@/lib/bookings";
 
 const WEEKDAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 

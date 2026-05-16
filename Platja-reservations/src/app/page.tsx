@@ -2,10 +2,12 @@ import { Hero } from "@/components/Hero";
 import { VillaOverview } from "@/components/VillaOverview";
 import { AvailabilityCalendar } from "@/components/AvailabilityCalendar";
 import { BookingForm } from "@/components/BookingForm";
-import { getBookings } from "@/lib/bookings";
+import { getBlockingBookings } from "@/lib/bookings";
 
-export default function HomePage() {
-  const bookings = getBookings();
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const bookings = await getBlockingBookings().catch(() => []);
   return (
     <main>
       <Hero />

@@ -1,40 +1,61 @@
-import bookingsData from "../../data/bookings.json";
-import { parseISO, isWithinInterval, isBefore, isEqual } from "date-fns";
+import { prisma } from "@/lib/db";
+import type { Booking as DbBooking, BookingStatus } from "@prisma/client";
+import { isBefore, isEqual, parseISO } from "date-fns";
 
-export type Booking = {
+export type PublicBooking = {
   id: string;
   start: string;
   end: string;
   label?: string;
 };
 
-export function getBookings(): Booking[] {
-  return bookingsData.bookings;
+const BLOCKING_STATUSES: BookingStatus[] = ["CONFIRMED", "TENTATIVE"];
+
+function toIsoDate(d: Date): string {
+  return d.toISOString().slice(0, 10);
 }
 
-export function rangesOverlap(
-  aStart: Date,
-  aEnd: Date,
-  bStart: Date,
-  bEnd: Date,
-): boolean {
+export async function getBlockingBookings(): Promise<PublicBooking[]> {
+  const rows = await prisma.booking.findMany({
+    where: { status: { in: BLOCKING_STATUSES } },
+    orderBy: { checkIn: "asc" },
+  });
+  return rows.map((b) => ({
+    id: b.id,
+    start: toIsoDate(b.checkIn),
+    end: toIsoDate(b.checkOut),
+    label: b.status === "TENTATIVE" ? "Tentative" : "Confirmed",
+  }));
+}
+
+function rangesOverlap(aStart: Date, aEnd: Date, bStart: Date, bEnd: Date): boolean {
   return !(isBefore(aEnd, bStart) || isBefore(bEnd, aStart));
 }
 
-export function isRangeAvailable(checkIn: string, checkOut: string): boolean {
+export async function isRangeAvailable(
+  checkIn: string,
+  checkOut: string,
+  ignoreBookingId?: string,
+): Promise<boolean> {
   const start = parseISO(checkIn);
   const end = parseISO(checkOut);
   if (isBefore(end, start) || isEqual(end, start)) return false;
 
-  return getBookings().every((b) => {
-    const bStart = parseISO(b.start);
-    const bEnd = parseISO(b.end);
-    return !rangesOverlap(start, end, bStart, bEnd);
+  const conflicts = await prisma.booking.findMany({
+    where: {
+      status: { in: BLOCKING_STATUSES },
+      ...(ignoreBookingId ? { NOT: { id: ignoreBookingId } } : {}),
+    },
   });
+  return conflicts.every((b) => !rangesOverlap(start, end, b.checkIn, b.checkOut));
 }
 
-export function isDateBooked(date: Date): boolean {
-  return getBookings().some((b) =>
-    isWithinInterval(date, { start: parseISO(b.start), end: parseISO(b.end) }),
-  );
+export async function getAllBookings(): Promise<DbBooking[]> {
+  return prisma.booking.findMany({ orderBy: { checkIn: "asc" } });
 }
+
+export function formatDateRange(start: Date, end: Date): string {
+  return `${toIsoDate(start)} → ${toIsoDate(end)}`;
+}
+
+export { toIsoDate };
