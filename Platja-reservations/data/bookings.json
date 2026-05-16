@@ -1,0 +1,16 @@
+{
+  "bookings": [
+    {
+      "id": "example-1",
+      "start": "2026-07-15",
+      "end": "2026-07-29",
+      "label": "Confirmed"
+    },
+    {
+      "id": "example-2",
+      "start": "2026-08-10",
+      "end": "2026-08-24",
+      "label": "Confirmed"
+    }
+  ]
+}
