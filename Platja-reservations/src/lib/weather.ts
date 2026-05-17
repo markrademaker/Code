@@ -76,6 +76,18 @@ export async function fetchForecast(): Promise<Forecast | null> {
 }
 
 export async function fetchToday(): Promise<Today | null> {
+  if (process.env.MOCK_WEATHER === "1") {
+    return {
+      temperatureC: 27,
+      weatherCode: 1,
+      highC: 29,
+      lowC: 19,
+      precipitationMm: 0,
+      sunrise: "07:14",
+      sunset: "20:38",
+      seaTempC: 24,
+    };
+  }
   const url = new URL("https://api.open-meteo.com/v1/forecast");
   url.searchParams.set("latitude", String(LAT));
   url.searchParams.set("longitude", String(LON));
