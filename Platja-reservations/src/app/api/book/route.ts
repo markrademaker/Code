@@ -7,12 +7,45 @@ import { getCurrentUser } from "@/lib/user";
 
 export const runtime = "nodejs";
 
-const schema = z.object({
-  checkIn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  checkOut: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  guests: z.coerce.number().int().min(1).max(20),
-  message: z.string().max(2000).optional(),
-});
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const MAX_NIGHTS = 90;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+const schema = z
+  .object({
+    checkIn: z.string().regex(DATE_RE),
+    checkOut: z.string().regex(DATE_RE),
+    guests: z.coerce.number().int().min(1).max(20),
+    message: z.string().max(2000).optional(),
+  })
+  .superRefine((v, ctx) => {
+    const inDate = new Date(v.checkIn);
+    const outDate = new Date(v.checkOut);
+    if (Number.isNaN(inDate.getTime()) || Number.isNaN(outDate.getTime())) {
+      ctx.addIssue({ code: "custom", message: "Invalid date" });
+      return;
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (inDate < today) {
+      ctx.addIssue({ code: "custom", path: ["checkIn"], message: "Check-in is in the past" });
+    }
+    if (outDate <= inDate) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["checkOut"],
+        message: "Check-out must be after check-in",
+      });
+    }
+    const nights = (outDate.getTime() - inDate.getTime()) / MS_PER_DAY;
+    if (nights > MAX_NIGHTS) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["checkOut"],
+        message: `Maximum stay is ${MAX_NIGHTS} nights`,
+      });
+    }
+  });
 
 export async function POST(req: Request) {
   const user = await getCurrentUser();
@@ -47,8 +80,9 @@ export async function POST(req: Request) {
       );
     }
   } catch (err) {
+    console.error("availability check failed", err);
     return NextResponse.json(
-      { error: `Database error: ${err instanceof Error ? err.message : "unknown"}` },
+      { error: "Could not check availability, please try again" },
       { status: 500 },
     );
   }
@@ -69,8 +103,9 @@ export async function POST(req: Request) {
       },
     });
   } catch (err) {
+    console.error("booking create failed", err);
     return NextResponse.json(
-      { error: `Could not save booking: ${err instanceof Error ? err.message : "unknown"}` },
+      { error: "Could not save the booking, please try again" },
       { status: 500 },
     );
   }

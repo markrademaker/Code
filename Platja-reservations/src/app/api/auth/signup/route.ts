@@ -67,7 +67,7 @@ export async function POST(req: Request) {
     });
     return res;
   } catch (err) {
-    const message = err instanceof Error ? err.message : "unknown";
-    return NextResponse.json({ error: `Sign-up failed: ${message}` }, { status: 500 });
+    console.error("signup failed", err);
+    return NextResponse.json({ error: "Sign-up failed, please try again" }, { status: 500 });
   }
 }
