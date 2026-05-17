@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { format, parseISO } from "date-fns";
 import { AdminPlanningCalendar } from "@/components/AdminPlanningCalendar";
 import { MessageThread } from "@/components/MessageThread";
+import { ChatWidget } from "@/components/ChatWidget";
 
 export type AdminBooking = {
   id: string;
@@ -303,6 +304,7 @@ export function AdminDashboard({ bookings: initial }: { bookings: AdminBooking[]
           })}
         </ul>
       </section>
+      <ChatWidget mode="admin" />
     </main>
   );
 }

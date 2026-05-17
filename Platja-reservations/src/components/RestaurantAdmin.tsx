@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { ChatWidget } from "@/components/ChatWidget";
 
 export type RestaurantRow = {
   id: string;
@@ -219,6 +220,7 @@ export function RestaurantAdmin({ initial }: { initial: RestaurantRow[] }) {
           })}
         </ul>
       </section>
+      <ChatWidget mode="admin" />
     </main>
   );
 }
