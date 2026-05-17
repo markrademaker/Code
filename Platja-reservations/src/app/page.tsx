@@ -15,10 +15,10 @@ export default async function HomePage() {
   ]);
   return (
     <main>
-      <TodayAtVilla />
       <VillaOverview />
       <AvailabilityCalendar bookings={bookings} />
       <BookingForm user={user} />
+      <TodayAtVilla />
       <Nearby />
       <footer className="border-t border-ink/10 bg-whitewash py-12 text-center text-sm text-ink/55">
         <p className="font-display text-lg text-ink/70">Villa Mas Nou</p>
