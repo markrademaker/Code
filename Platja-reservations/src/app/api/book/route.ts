@@ -16,6 +16,7 @@ const schema = z
     checkIn: z.string().regex(DATE_RE),
     checkOut: z.string().regex(DATE_RE),
     guests: z.coerce.number().int().min(1).max(20),
+    guestNames: z.string().max(2000).optional(),
     message: z.string().max(2000).optional(),
   })
   .superRefine((v, ctx) => {
@@ -95,6 +96,7 @@ export async function POST(req: Request) {
         email: user.email,
         phone: user.phone,
         guests: data.guests,
+        guestNames: data.guestNames?.trim() || null,
         checkIn: new Date(data.checkIn),
         checkOut: new Date(data.checkOut),
         message: data.message,

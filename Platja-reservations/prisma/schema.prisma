@@ -34,6 +34,7 @@ model Booking {
   email       String
   phone       String?
   guests      Int
+  guestNames  String?
   checkIn     DateTime         @db.Date
   checkOut    DateTime         @db.Date
   message     String?

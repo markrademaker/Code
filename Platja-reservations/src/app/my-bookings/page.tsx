@@ -26,6 +26,7 @@ export default async function MyBookingsPage() {
     checkIn: b.checkIn.toISOString().slice(0, 10),
     checkOut: b.checkOut.toISOString().slice(0, 10),
     guests: b.guests,
+    guestNames: b.guestNames,
     message: b.message,
     status: b.status,
     ownerNote: b.ownerNote,
