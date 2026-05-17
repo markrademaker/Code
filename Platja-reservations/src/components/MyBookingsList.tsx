@@ -9,6 +9,7 @@ type Booking = {
   checkIn: string;
   checkOut: string;
   guests: number;
+  guestNames: string | null;
   message: string | null;
   status: "PENDING" | "TENTATIVE" | "CONFIRMED" | "DECLINED" | "CANCELLED";
   ownerNote: string | null;
@@ -103,6 +104,28 @@ export function MyBookingsList({ bookings: initial }: { bookings: Booking[] }) {
                 <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-ink">
                   {b.ownerNote}
                 </p>
+              </div>
+            )}
+
+            {b.guestNames && b.guestNames.trim() && (
+              <div className="mt-3 rounded-2xl bg-sand/50 px-4 py-3">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-ink/55">
+                  Other guests
+                </p>
+                <ul className="mt-1 flex flex-wrap gap-1.5">
+                  {b.guestNames
+                    .split(/\r?\n|,/)
+                    .map((n) => n.trim())
+                    .filter(Boolean)
+                    .map((n) => (
+                      <li
+                        key={n}
+                        className="rounded-full bg-white px-2.5 py-0.5 text-sm text-ink shadow-soft ring-1 ring-ink/5"
+                      >
+                        {n}
+                      </li>
+                    ))}
+                </ul>
               </div>
             )}
 

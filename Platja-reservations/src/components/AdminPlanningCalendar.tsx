@@ -38,16 +38,24 @@ function bookingForDay(day: Date, bookings: AdminBooking[]): AdminBooking | unde
   );
 }
 
-function Month({ month, bookings }: { month: Date; bookings: AdminBooking[] }) {
+function Month({
+  month,
+  bookings,
+  onSelect,
+}: {
+  month: Date;
+  bookings: AdminBooking[];
+  onSelect?: (id: string) => void;
+}) {
   const days = eachDayOfInterval({
     start: startOfWeek(startOfMonth(month), { weekStartsOn: 1 }),
     end: endOfWeek(endOfMonth(month), { weekStartsOn: 1 }),
   });
 
   return (
-    <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-deep/5">
-      <p className="mb-3 text-center font-semibold text-deep">{format(month, "MMMM yyyy")}</p>
-      <div className="grid grid-cols-7 gap-1 text-center text-[10px] text-deep/50">
+    <div className="rounded-2xl bg-white p-4 shadow-soft ring-1 ring-ink/5">
+      <p className="mb-3 text-center font-semibold text-ink">{format(month, "MMMM yyyy")}</p>
+      <div className="grid grid-cols-7 gap-1 text-center text-[10px] text-ink/50">
         {WEEKDAYS.map((d) => (
           <div key={d} className="py-1">
             {d}
@@ -58,24 +66,45 @@ function Month({ month, bookings }: { month: Date; bookings: AdminBooking[] }) {
         {days.map((day) => {
           const inMonth = isSameMonth(day, month);
           const booking = inMonth ? bookingForDay(day, bookings) : undefined;
-          const baseClasses = "aspect-square flex flex-col items-center justify-center rounded text-[11px] leading-tight";
+          const baseClasses =
+            "aspect-square flex flex-col items-center justify-center rounded text-[11px] leading-tight";
           const cls = !inMonth
-            ? `${baseClasses} text-deep/20`
+            ? `${baseClasses} text-ink/20`
             : booking
-            ? `${baseClasses} ${colorFor(booking.status)}`
-            : `${baseClasses} bg-deep/5 text-deep`;
-          return (
-            <div
-              key={day.toISOString()}
-              className={cls}
-              title={booking ? `${booking.name} (${booking.status.toLowerCase()})` : undefined}
-            >
+              ? `${baseClasses} ${colorFor(booking.status)} cursor-pointer transition hover:scale-[1.05] hover:ring-2 hover:ring-ink/20`
+              : `${baseClasses} bg-ink/5 text-ink`;
+
+          const content = (
+            <>
               <span>{format(day, "d")}</span>
               {booking && inMonth && (
                 <span className="hidden truncate px-1 sm:block sm:text-[9px]">
                   {booking.name.split(" ")[0]}
                 </span>
               )}
+            </>
+          );
+
+          if (booking && inMonth && onSelect) {
+            return (
+              <button
+                key={day.toISOString()}
+                type="button"
+                className={cls}
+                title={`${booking.name} (${booking.status.toLowerCase()}) — tap for details`}
+                onClick={() => onSelect(booking.id)}
+              >
+                {content}
+              </button>
+            );
+          }
+          return (
+            <div
+              key={day.toISOString()}
+              className={cls}
+              title={booking ? `${booking.name} (${booking.status.toLowerCase()})` : undefined}
+            >
+              {content}
             </div>
           );
         })}
@@ -84,7 +113,13 @@ function Month({ month, bookings }: { month: Date; bookings: AdminBooking[] }) {
   );
 }
 
-export function AdminPlanningCalendar({ bookings }: { bookings: AdminBooking[] }) {
+export function AdminPlanningCalendar({
+  bookings,
+  onSelect,
+}: {
+  bookings: AdminBooking[];
+  onSelect?: (id: string) => void;
+}) {
   const [offset, setOffset] = useState(0);
   const months = useMemo(() => {
     const base = startOfMonth(addMonths(new Date(), offset));
@@ -125,7 +160,12 @@ export function AdminPlanningCalendar({ bookings }: { bookings: AdminBooking[] }
       </p>
       <div className="mt-4 grid gap-4 md:grid-cols-3">
         {months.map((m) => (
-          <Month key={m.toISOString()} month={m} bookings={bookings} />
+          <Month
+            key={m.toISOString()}
+            month={m}
+            bookings={bookings}
+            onSelect={onSelect}
+          />
         ))}
       </div>
     </section>

@@ -124,6 +124,20 @@ export function BookingForm({ user }: { user: BookingFormUser | null }) {
           />
         </div>
         <label className="block">
+          <span className="text-sm font-medium text-ink">
+            Names of the other guests
+          </span>
+          <span className="block text-xs text-ink/55">
+            One name per line. You don&apos;t need to add yourself.
+          </span>
+          <textarea
+            name="guestNames"
+            rows={3}
+            className="mt-1 w-full rounded-2xl border border-ink/15 bg-white px-4 py-3 text-ink shadow-soft focus:border-sea focus:outline-none focus:ring-2 focus:ring-sea/30"
+            placeholder={"Anna van Dijk\nDiego Ferrer\n…"}
+          />
+        </label>
+        <label className="block">
           <span className="text-sm font-medium text-ink">Message (optional)</span>
           <textarea
             name="message"

@@ -69,6 +69,11 @@ export async function sendAdminBookingRequest(booking: Booking): Promise<void> {
       ${row("Check-in", fmt(booking.checkIn))}
       ${row("Check-out", fmt(booking.checkOut))}
     </table>
+    ${
+      booking.guestNames
+        ? `<p style="font-family:system-ui,sans-serif;font-size:14px;margin:8px 0"><strong>Other guests:</strong><br>${escape(booking.guestNames).replace(/\n/g, "<br>")}</p>`
+        : ""
+    }
     ${booking.message ? `<p style="background:#f5efe6;padding:12px 16px;border-radius:8px;font-family:system-ui,sans-serif;white-space:pre-wrap">${escape(booking.message)}</p>` : ""}
     <p style="margin-top:24px">
       ${button(accept, "✓ Accept", "#1f4a5f")}

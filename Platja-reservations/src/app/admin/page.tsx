@@ -11,6 +11,7 @@ export default async function AdminPage() {
     email: b.email,
     phone: b.phone,
     guests: b.guests,
+    guestNames: b.guestNames,
     checkIn: b.checkIn.toISOString().slice(0, 10),
     checkOut: b.checkOut.toISOString().slice(0, 10),
     message: b.message,

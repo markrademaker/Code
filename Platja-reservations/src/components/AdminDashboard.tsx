@@ -12,6 +12,7 @@ export type AdminBooking = {
   email: string;
   phone: string | null;
   guests: number;
+  guestNames: string | null;
   checkIn: string;
   checkOut: string;
   message: string | null;
@@ -47,6 +48,15 @@ export function AdminDashboard({ bookings: initial }: { bookings: AdminBooking[]
   const [openChatId, setOpenChatId] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [highlightId, setHighlightId] = useState<string | null>(null);
+
+  function jumpToBooking(id: string) {
+    const el = document.getElementById(`booking-${id}`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    setHighlightId(id);
+    setTimeout(() => setHighlightId((h) => (h === id ? null : h)), 2000);
+  }
 
   const today = new Date().toISOString().slice(0, 10);
 
@@ -145,7 +155,7 @@ export function AdminDashboard({ bookings: initial }: { bookings: AdminBooking[]
         </div>
       </div>
 
-      <AdminPlanningCalendar bookings={bookings} />
+      <AdminPlanningCalendar bookings={bookings} onSelect={jumpToBooking} />
 
       <section className="mt-10">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -177,24 +187,32 @@ export function AdminDashboard({ bookings: initial }: { bookings: AdminBooking[]
           )}
           {filtered.map((b) => {
             const editing = editingId === b.id;
+            const isHi = highlightId === b.id;
+            const names = (b.guestNames ?? "")
+              .split(/\r?\n|,/)
+              .map((n) => n.trim())
+              .filter(Boolean);
             return (
               <li
                 key={b.id}
-                className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-deep/5"
+                id={`booking-${b.id}`}
+                className={`scroll-mt-24 rounded-2xl bg-white p-5 shadow-soft ring-1 transition ${
+                  isHi ? "ring-terracotta ring-2" : "ring-ink/5"
+                }`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <p className="font-semibold text-deep">{b.name}</p>
-                    <p className="text-sm text-deep/70">
+                    <p className="font-semibold text-ink">{b.name}</p>
+                    <p className="text-sm text-ink/70">
                       <a href={`mailto:${b.email}`} className="hover:underline">
                         {b.email}
                       </a>
                       {b.phone && <> · {b.phone}</>}
                     </p>
-                    <p className="mt-1 text-sm text-deep/80">
+                    <p className="mt-1 text-sm text-ink/80">
                       {format(parseISO(b.checkIn), "EEE d MMM yyyy")}{" → "}
                       {format(parseISO(b.checkOut), "EEE d MMM yyyy")}
-                      <span className="ml-2 text-deep/60">· {b.guests} guests</span>
+                      <span className="ml-2 text-ink/60">· {b.guests} guests</span>
                     </p>
                   </div>
                   <span
@@ -204,8 +222,26 @@ export function AdminDashboard({ bookings: initial }: { bookings: AdminBooking[]
                   </span>
                 </div>
 
+                {names.length > 0 && (
+                  <div className="mt-3 rounded-xl bg-sand/50 px-4 py-3">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-ink/55">
+                      Other guests
+                    </p>
+                    <ul className="mt-1 flex flex-wrap gap-1.5">
+                      {names.map((n) => (
+                        <li
+                          key={n}
+                          className="rounded-full bg-white px-2.5 py-0.5 text-sm text-ink shadow-soft ring-1 ring-ink/5"
+                        >
+                          {n}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
                 {b.message && (
-                  <p className="mt-3 whitespace-pre-wrap rounded-xl bg-sand/60 px-4 py-3 text-sm text-deep/80">
+                  <p className="mt-3 whitespace-pre-wrap rounded-xl bg-sand/60 px-4 py-3 text-sm text-ink/80">
                     {b.message}
                   </p>
                 )}
