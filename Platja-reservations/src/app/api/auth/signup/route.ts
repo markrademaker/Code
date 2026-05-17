@@ -15,7 +15,12 @@ const schema = z.object({
   email: z.string().email().max(200),
   phone: z.string().max(40).optional(),
   password: z.string().min(8).max(200),
+  inviteCode: z.string().min(1).max(120),
 });
+
+function expectedInviteCode(): string {
+  return (process.env.SIGNUP_INVITE_CODE ?? "rademaker").trim().toLowerCase();
+}
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
@@ -26,7 +31,15 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
-  const { name, email, phone, password } = parsed.data;
+  const { name, email, phone, password, inviteCode } = parsed.data;
+
+  if (inviteCode.trim().toLowerCase() !== expectedInviteCode()) {
+    return NextResponse.json(
+      { error: "Wrong activation code" },
+      { status: 403 },
+    );
+  }
+
   const normalizedEmail = email.toLowerCase().trim();
 
   try {

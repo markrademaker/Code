@@ -109,6 +109,14 @@ export default function LoginPage({
               autoComplete={isSignup ? "new-password" : "current-password"}
               minLength={isSignup ? 8 : undefined}
             />
+            {isSignup && (
+              <Field
+                label="Activation code"
+                name="inviteCode"
+                required
+                autoComplete="off"
+              />
+            )}
             {error && (
               <p className="rounded-xl bg-terracotta/20 px-4 py-3 text-sm text-terracotta">
                 {error}
