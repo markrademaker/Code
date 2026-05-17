@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { NavBar } from "@/components/NavBar";
+import { ChatWidget } from "@/components/ChatWidget";
 import { getCurrentUser } from "@/lib/user";
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default async function RootLayout({
       <body>
         <NavBar user={navUser} />
         {children}
+        {user && <ChatWidget mode="guest" />}
       </body>
     </html>
   );
