@@ -1,4 +1,3 @@
-import { Hero } from "@/components/Hero";
 import { TodayAtVilla } from "@/components/TodayAtVilla";
 import { VillaOverview } from "@/components/VillaOverview";
 import { Nearby } from "@/components/Nearby";
@@ -16,7 +15,6 @@ export default async function HomePage() {
   ]);
   return (
     <main>
-      <Hero />
       <TodayAtVilla />
       <VillaOverview />
       <AvailabilityCalendar bookings={bookings} />
