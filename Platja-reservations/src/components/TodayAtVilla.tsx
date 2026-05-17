@@ -19,33 +19,7 @@ function timeAtVilla(): string {
 }
 
 function FallbackWeather() {
-  return (
-    <section className="relative overflow-hidden bg-sand-wash">
-      <div aria-hidden className="absolute inset-0 bg-sun-fade pointer-events-none" />
-      <div className="relative mx-auto max-w-6xl px-5 py-20 text-center sm:px-6 sm:py-28">
-        <p className="text-xs uppercase tracking-[0.3em] text-ink/55">
-          Villa Mas Nou · Platja d&apos;Aro
-        </p>
-        <h1 className="mt-6 font-display text-4xl font-semibold sm:text-6xl">
-          A quiet villa above the Mediterranean
-        </h1>
-        <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <a
-            href="#book"
-            className="rounded-full bg-ocean px-7 py-3.5 font-medium text-whitewash shadow-glow"
-          >
-            Request a booking
-          </a>
-          <a
-            href="#availability"
-            className="rounded-full border border-ink/15 bg-white/70 px-7 py-3.5 font-medium text-ink backdrop-blur"
-          >
-            View availability
-          </a>
-        </div>
-      </div>
-    </section>
-  );
+  return null;
 }
 
 export async function TodayAtVilla() {
@@ -143,26 +117,11 @@ export async function TodayAtVilla() {
           </ul>
         </div>
 
-        <div className="mt-14 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <a
-            href="#book"
-            className="rounded-full bg-ocean px-8 py-4 text-center font-medium text-whitewash shadow-glow transition hover:bg-ocean/90"
-          >
-            Request a booking
+        <p className="mt-12 text-center text-sm">
+          <a href="/weather" className="font-medium text-ink/55 hover:text-ink">
+            See the 7-day forecast →
           </a>
-          <a
-            href="#availability"
-            className="rounded-full border border-ink/15 bg-white/70 px-8 py-4 text-center font-medium text-ink backdrop-blur transition hover:bg-white"
-          >
-            View availability
-          </a>
-          <a
-            href="/weather"
-            className="self-center text-sm font-medium text-ink/55 hover:text-ink sm:ml-2"
-          >
-            7-day forecast →
-          </a>
-        </div>
+        </p>
       </div>
     </section>
   );
