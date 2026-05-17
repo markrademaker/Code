@@ -16,7 +16,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Wrong password" }, { status: 401 });
   }
   const cookie = await signSessionCookie();
-  const redirect = body.next?.startsWith("/admin") ? body.next : "/admin";
+  const requested = typeof body.next === "string" ? body.next : "";
+  const isSafeAdminPath =
+    requested.startsWith("/admin") &&
+    !requested.startsWith("/admin//") &&
+    !requested.includes("..");
+  const redirect = isSafeAdminPath ? requested : "/admin";
   const res = NextResponse.json({ ok: true, redirect });
   res.cookies.set({
     name: ADMIN_COOKIE_NAME,

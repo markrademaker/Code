@@ -5,6 +5,17 @@ import { useState } from "react";
 
 type Mode = "login" | "signup";
 
+function safeNext(n: string | undefined): string {
+  if (!n) return "/";
+  try {
+    const u = new URL(n, window.location.origin);
+    if (u.origin !== window.location.origin) return "/";
+    return u.pathname + u.search + u.hash;
+  } catch {
+    return "/";
+  }
+}
+
 export default function LoginPage({
   searchParams,
 }: {
@@ -42,7 +53,7 @@ export default function LoginPage({
         setError(json.error ?? "Something went wrong");
         return;
       }
-      const next = searchParams.next?.startsWith("/") ? searchParams.next : "/";
+      const next = safeNext(searchParams.next);
       window.location.href = next;
     } catch (err) {
       setSubmitting(false);

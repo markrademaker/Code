@@ -24,6 +24,10 @@ function escape(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
+function safeHeader(s: string): string {
+  return s.replace(/[\r\n\t]/g, " ").slice(0, 180);
+}
+
 function fmt(d: Date): string {
   return format(d, "EEE d MMM yyyy");
 }
@@ -78,7 +82,9 @@ export async function sendAdminBookingRequest(booking: Booking): Promise<void> {
     from: from(),
     to: getRecipients(),
     replyTo: booking.email,
-    subject: `Booking request: ${fmt(booking.checkIn)} → ${fmt(booking.checkOut)} (${booking.name})`,
+    subject: safeHeader(
+      `Booking request: ${fmt(booking.checkIn)} → ${fmt(booking.checkOut)} (${booking.name})`,
+    ),
     html,
   });
   if (error) throw new Error(`Resend (admin email): ${error.message}`);
@@ -157,7 +163,7 @@ export async function sendMessageToOwners(
     from: from(),
     to: getRecipients(),
     replyTo: booking.email,
-    subject: `${booking.name} sent you a message about their booking`,
+    subject: safeHeader(`${booking.name} sent you a message about their booking`),
     html,
   });
   if (error) throw new Error(`Resend (owner message): ${error.message}`);
