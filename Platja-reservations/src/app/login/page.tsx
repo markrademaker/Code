@@ -19,11 +19,18 @@ function safeNext(n: string | undefined): string {
 export default function LoginPage({
   searchParams,
 }: {
-  searchParams: { next?: string; mode?: string };
+  searchParams: { next?: string; mode?: string; authError?: string };
 }) {
   const [mode, setMode] = useState<Mode>(searchParams.mode === "signup" ? "signup" : "login");
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(searchParams.authError ?? null);
+  const [inviteCode, setInviteCode] = useState("");
+
+  function googleHref(): string {
+    const u = new URLSearchParams({ mode });
+    if (mode === "signup" && inviteCode.trim()) u.set("code", inviteCode.trim());
+    return `/api/auth/google/start?${u.toString()}`;
+  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -99,7 +106,20 @@ export default function LoginPage({
               : "Sign in to request a booking with your saved details."}
           </p>
 
-          <form onSubmit={onSubmit} className="mt-6 grid gap-4">
+          <a
+            href={googleHref()}
+            className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl border border-ink/15 bg-white px-5 py-3 text-sm font-medium text-ink shadow-soft transition hover:bg-whitewash"
+          >
+            <GoogleIcon />
+            {isSignup ? "Sign up with Google" : "Continue with Google"}
+          </a>
+          <div className="my-5 flex items-center gap-3 text-xs uppercase tracking-wider text-ink/45">
+            <span className="h-px flex-1 bg-ink/15" />
+            or
+            <span className="h-px flex-1 bg-ink/15" />
+          </div>
+
+          <form onSubmit={onSubmit} className="grid gap-4">
             {isSignup && (
               <Field label="Your name" name="name" required autoComplete="name" />
             )}
@@ -121,12 +141,17 @@ export default function LoginPage({
               minLength={isSignup ? 8 : undefined}
             />
             {isSignup && (
-              <Field
-                label="Activation code"
-                name="inviteCode"
-                required
-                autoComplete="off"
-              />
+              <label className="block">
+                <span className="text-sm font-medium text-ink">Activation code</span>
+                <input
+                  name="inviteCode"
+                  required
+                  autoComplete="off"
+                  value={inviteCode}
+                  onChange={(e) => setInviteCode(e.target.value)}
+                  className="mt-1 w-full rounded-2xl border border-ink/15 bg-white/90 px-4 py-3 text-ink shadow-soft focus:border-sea focus:outline-none focus:ring-2 focus:ring-sea/40"
+                />
+              </label>
             )}
             {error && (
               <p className="rounded-xl bg-terracotta/20 px-4 py-3 text-sm text-terracotta">
@@ -212,5 +237,28 @@ function Field({
         className="mt-1 w-full rounded-2xl border border-ink/15 bg-white/90 px-4 py-3 text-ink shadow-soft focus:border-sea focus:outline-none focus:ring-2 focus:ring-sea/40"
       />
     </label>
+  );
+}
+
+function GoogleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden>
+      <path
+        fill="#4285F4"
+        d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62Z"
+      />
+      <path
+        fill="#34A853"
+        d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.92v2.33A9 9 0 0 0 9 18Z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M3.97 10.72A5.41 5.41 0 0 1 3.68 9c0-.6.1-1.18.29-1.72V4.95H.92A9 9 0 0 0 0 9c0 1.45.35 2.83.92 4.05l3.05-2.33Z"
+      />
+      <path
+        fill="#EA4335"
+        d="M9 3.58c1.32 0 2.5.45 3.44 1.34l2.58-2.58A9 9 0 0 0 9 0 9 9 0 0 0 .92 4.95l3.05 2.33C4.68 5.16 6.66 3.58 9 3.58Z"
+      />
+    </svg>
   );
 }
