@@ -16,6 +16,7 @@ import {
   startOfDay,
 } from "date-fns";
 import type { PublicBooking as Booking } from "@/lib/bookings";
+import { SectionMark } from "@/components/Marks";
 
 const WEEKDAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
@@ -83,15 +84,13 @@ export function AvailabilityCalendar({ bookings }: { bookings: Booking[] }) {
   }, [offset]);
 
   return (
-    <section id="availability" className="bg-sand/40 py-16 sm:py-24">
-      <div className="mx-auto max-w-6xl px-5 sm:px-6">
-        <div className="flex flex-wrap items-end justify-between gap-3">
+    <section id="availability" className="bg-sand/40 py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-xl">
-            <p className="text-xs uppercase tracking-[0.2em] text-ink/55">
-              When can you stay?
-            </p>
-            <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-              Availability
+            <SectionMark number="II" label="When are you free?" />
+            <h2 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-6xl">
+              Pick a <span className="italic text-terracotta">week</span>.
             </h2>
           </div>
           <div className="flex gap-2">

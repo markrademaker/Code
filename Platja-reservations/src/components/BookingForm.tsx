@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { formatEuro } from "@/lib/pricing";
+import { SectionMark, SunMark } from "@/components/Marks";
 
 type Status =
   | { kind: "idle" }
@@ -57,29 +58,37 @@ export function BookingForm({ user }: { user: BookingFormUser | null }) {
 
   if (!user) {
     return (
-      <section id="book" className="mx-auto max-w-3xl px-5 py-16 sm:px-6 sm:py-24">
-        <div className="rounded-3xl bg-white p-8 shadow-soft ring-1 ring-ink/5 sm:p-10">
-          <p className="text-xs uppercase tracking-[0.2em] text-ink/55">Request a booking</p>
-          <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-            Sign in to book in seconds
-          </h2>
-          <p className="mt-3 text-base text-ink/70 sm:text-lg">
-            We&apos;ll save your name, email and phone so you only pick the
-            dates next time.
-          </p>
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+      <section id="book" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
+        <div className="grid gap-10 rounded-[2rem] bg-white p-8 shadow-soft ring-1 ring-ink/5 sm:p-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
+          <div>
+            <SectionMark number="III" label="Reserve" />
+            <h2 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl">
+              Sign in to book
+              <br />
+              <span className="italic text-terracotta">in seconds</span>.
+            </h2>
+            <p className="mt-5 text-base text-ink/70 sm:text-lg">
+              We save your name, email, and phone — so next time you only
+              pick the dates.
+            </p>
+          </div>
+          <div className="flex flex-col justify-center gap-3 lg:items-start">
             <Link
               href="/login?mode=signup&next=%2F%23book"
-              className="rounded-full bg-ocean px-7 py-3.5 text-center font-medium text-whitewash shadow-glow hover:bg-ocean/90"
+              className="w-full rounded-full bg-ocean px-7 py-3.5 text-center font-medium text-whitewash shadow-glow hover:bg-ocean/90 sm:w-auto"
             >
               Create account
             </Link>
             <Link
               href="/login?next=%2F%23book"
-              className="rounded-full border border-ink/15 px-7 py-3.5 text-center font-medium text-ink hover:bg-whitewash"
+              className="w-full rounded-full border border-ink/15 px-7 py-3.5 text-center font-medium text-ink hover:bg-whitewash sm:w-auto"
             >
               Sign in
             </Link>
+            <p className="mt-3 flex items-center gap-2 text-xs text-ink/55">
+              <SunMark className="h-3 w-3 text-terracotta" />
+              Activation code required for sign-up
+            </p>
           </div>
         </div>
       </section>
@@ -124,27 +133,47 @@ export function BookingForm({ user }: { user: BookingFormUser | null }) {
   const submitting = status.kind === "submitting";
 
   return (
-    <section id="book" className="mx-auto max-w-3xl px-5 py-16 sm:px-6 sm:py-24">
-      <p className="text-xs uppercase tracking-[0.2em] text-ink/55">Booking</p>
-      <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-        Request your dates
-      </h2>
-      <p className="mt-3 text-base text-ink/70 sm:text-lg">
-        Pick check-in and check-out and we&apos;ll email you back to confirm.
-      </p>
+    <section id="book" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
+      <div className="grid gap-10 lg:grid-cols-[1fr_1.3fr] lg:gap-20">
+        <aside className="lg:sticky lg:top-28 lg:self-start">
+          <SectionMark number="III" label="Reserve" />
+          <h2 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
+            Request <span className="italic text-terracotta">your</span>
+            <br />
+            dates.
+          </h2>
+          <p className="mt-5 max-w-md text-base text-ink/70 sm:text-lg">
+            Pick check-in and check-out — we&apos;ll email you back to
+            confirm, usually within a day.
+          </p>
 
-      <div className="mt-7 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-4 text-sm shadow-soft ring-1 ring-ink/5 sm:p-5">
-        <div className="text-ink/80">
-          Booking as <strong className="text-ink">{user.name}</strong>{" "}
-          <span className="text-ink/55">({user.email})</span>
-        </div>
-        <Link
-          href="/my-bookings"
-          className="text-xs font-medium text-ocean hover:underline"
-        >
-          My bookings →
-        </Link>
-      </div>
+          <ul className="mt-8 grid gap-3 text-sm text-ink/75">
+            {["Saturday-to-Saturday is easiest", "Minimum stay one week in summer", "Payment due seven days before arrival"].map(
+              (line) => (
+                <li key={line} className="flex items-start gap-3">
+                  <SunMark className="mt-1 h-3 w-3 shrink-0 text-terracotta" />
+                  <span>{line}</span>
+                </li>
+              ),
+            )}
+          </ul>
+
+          <div className="mt-8 flex items-center gap-3 rounded-2xl bg-white p-4 text-sm shadow-soft ring-1 ring-ink/5">
+            <div className="flex-1 text-ink/80">
+              Booking as <strong className="text-ink">{user.name}</strong>
+              <br />
+              <span className="text-xs text-ink/55">{user.email}</span>
+            </div>
+            <Link
+              href="/my-bookings"
+              className="text-xs font-medium text-ocean hover:underline"
+            >
+              My bookings →
+            </Link>
+          </div>
+        </aside>
+
+        <div>
 
       <form onSubmit={handleSubmit} className="mt-6 grid gap-5">
         <div className="grid gap-5 sm:grid-cols-2">
@@ -246,6 +275,8 @@ export function BookingForm({ user }: { user: BookingFormUser | null }) {
           </p>
         )}
       </form>
+        </div>
+      </div>
     </section>
   );
 }
