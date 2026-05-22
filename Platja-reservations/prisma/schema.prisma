@@ -16,6 +16,13 @@ enum BookingStatus {
   CANCELLED
 }
 
+enum PaymentStatus {
+  UNPAID
+  AWAITING_VERIFICATION
+  PAID
+  REFUNDED
+}
+
 model User {
   id           String           @id @default(cuid())
   email        String           @unique
@@ -30,27 +37,45 @@ model User {
 }
 
 model Booking {
-  id          String           @id @default(cuid())
-  name        String
-  email       String
-  phone       String?
-  guests      Int
-  guestNames  String?
-  checkIn     DateTime         @db.Date
-  checkOut    DateTime         @db.Date
-  message     String?
-  status      BookingStatus    @default(PENDING)
-  notes       String?
-  ownerNote   String?
-  userId      String?
-  user        User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
-  messages    BookingMessage[]
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  id                String           @id @default(cuid())
+  name              String
+  email             String
+  phone             String?
+  guests            Int
+  guestNames        String?
+  checkIn           DateTime         @db.Date
+  checkOut          DateTime         @db.Date
+  message           String?
+  status            BookingStatus    @default(PENDING)
+  notes             String?
+  ownerNote         String?
+  totalAmountCents  Int?
+  paymentStatus     PaymentStatus    @default(UNPAID)
+  paidAt            DateTime?
+  paymentDueDate    DateTime?        @db.Date
+  userId            String?
+  user              User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  messages          BookingMessage[]
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 
   @@index([status])
   @@index([checkIn, checkOut])
   @@index([userId])
+  @@index([paymentStatus])
+}
+
+model RatePeriod {
+  id               String   @id @default(cuid())
+  startDate        DateTime @db.Date
+  endDate          DateTime @db.Date
+  nightlyRateCents Int
+  label            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([startDate])
+  @@index([endDate])
 }
 
 model BookingMessage {

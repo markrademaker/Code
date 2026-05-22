@@ -1,13 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { formatEuro } from "@/lib/pricing";
 
 type Status =
   | { kind: "idle" }
   | { kind: "submitting" }
   | { kind: "success" }
   | { kind: "error"; message: string };
+
+type QuoteData = {
+  nights: number;
+  coveredNights: number;
+  missingNights: number;
+  totalCents: number | null;
+};
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export type BookingFormUser = {
   name: string;
@@ -17,6 +27,33 @@ export type BookingFormUser = {
 
 export function BookingForm({ user }: { user: BookingFormUser | null }) {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
+  const [quote, setQuote] = useState<QuoteData | null>(null);
+  const [quoteLoading, setQuoteLoading] = useState(false);
+
+  useEffect(() => {
+    if (!DATE_RE.test(checkIn) || !DATE_RE.test(checkOut) || checkOut <= checkIn) {
+      setQuote(null);
+      return;
+    }
+    let alive = true;
+    setQuoteLoading(true);
+    fetch(`/api/quote?checkIn=${checkIn}&checkOut=${checkOut}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (!alive) return;
+        setQuote(j);
+        setQuoteLoading(false);
+      })
+      .catch(() => {
+        if (!alive) return;
+        setQuoteLoading(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [checkIn, checkOut]);
 
   if (!user) {
     return (
@@ -111,8 +148,22 @@ export function BookingForm({ user }: { user: BookingFormUser | null }) {
 
       <form onSubmit={handleSubmit} className="mt-6 grid gap-5">
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="Check-in" name="checkIn" type="date" required />
-          <Field label="Check-out" name="checkOut" type="date" required />
+          <Field
+            label="Check-in"
+            name="checkIn"
+            type="date"
+            required
+            value={checkIn}
+            onChange={setCheckIn}
+          />
+          <Field
+            label="Check-out"
+            name="checkOut"
+            type="date"
+            required
+            value={checkOut}
+            onChange={setCheckOut}
+          />
           <Field
             label="Number of guests"
             name="guests"
@@ -123,6 +174,35 @@ export function BookingForm({ user }: { user: BookingFormUser | null }) {
             required
           />
         </div>
+
+        {quote && quote.nights > 0 && (
+          <div className="rounded-2xl bg-sand/40 p-4 sm:p-5">
+            <p className="text-xs uppercase tracking-wider text-ink/55">
+              Estimated price
+            </p>
+            <p className="mt-1 font-display text-2xl font-semibold text-ink">
+              {quote.totalCents != null
+                ? formatEuro(quote.totalCents)
+                : "Price on request"}
+              <span className="ml-2 text-sm font-normal text-ink/55">
+                · {quote.nights} {quote.nights === 1 ? "night" : "nights"}
+              </span>
+            </p>
+            {quote.missingNights > 0 && (
+              <p className="mt-1 text-xs text-ink/60">
+                {quote.missingNights}{" "}
+                {quote.missingNights === 1 ? "night" : "nights"} not yet
+                priced — we&apos;ll confirm by email.
+              </p>
+            )}
+            <p className="mt-2 text-xs text-ink/60">
+              Full payment due 7 days before check-in.
+            </p>
+          </div>
+        )}
+        {!quote && quoteLoading && (
+          <p className="text-xs text-ink/55">Calculating price…</p>
+        )}
         <label className="block">
           <span className="text-sm font-medium text-ink">
             Names of the other guests
@@ -178,6 +258,8 @@ function Field({
   min,
   max,
   defaultValue,
+  value,
+  onChange,
 }: {
   label: string;
   name: string;
@@ -186,7 +268,10 @@ function Field({
   min?: number;
   max?: number;
   defaultValue?: string | number;
+  value?: string;
+  onChange?: (v: string) => void;
 }) {
+  const controlled = value !== undefined && onChange !== undefined;
   return (
     <label className="block">
       <span className="text-sm font-medium text-ink">{label}</span>
@@ -196,7 +281,9 @@ function Field({
         required={required}
         min={min}
         max={max}
-        defaultValue={defaultValue}
+        {...(controlled
+          ? { value, onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange?.(e.target.value) }
+          : { defaultValue })}
         className="mt-1 w-full rounded-2xl border border-ink/15 bg-white px-4 py-3 text-ink shadow-soft focus:border-sea focus:outline-none focus:ring-2 focus:ring-sea/30"
       />
     </label>
