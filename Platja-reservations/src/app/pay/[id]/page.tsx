@@ -3,6 +3,7 @@ import { format, parseISO } from "date-fns";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/user";
 import { formatEuro } from "@/lib/pricing";
+import { isStripeConfigured } from "@/lib/stripe";
 import { PayBookingActions } from "@/components/PayBookingActions";
 
 export const dynamic = "force-dynamic";
@@ -91,6 +92,8 @@ export default async function PayPage({ params }: { params: { id: string } }) {
       <PayBookingActions
         bookingId={booking.id}
         paymentStatus={booking.paymentStatus}
+        hasAmount={booking.totalAmountCents != null && booking.totalAmountCents > 0}
+        stripeConfigured={isStripeConfigured()}
       />
     </main>
   );

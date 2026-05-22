@@ -53,6 +53,8 @@ model Booking {
   paymentStatus     PaymentStatus    @default(UNPAID)
   paidAt            DateTime?
   paymentDueDate    DateTime?        @db.Date
+  stripeSessionId   String?
+  stripePaymentId   String?
   userId            String?
   user              User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
   messages          BookingMessage[]
