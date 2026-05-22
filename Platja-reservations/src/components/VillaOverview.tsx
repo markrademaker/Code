@@ -1,52 +1,77 @@
+import { SectionMark, SunMark } from "@/components/Marks";
+
 const features = [
   { title: "Private pool", description: "Sun terrace, sea views, day beds" },
-  { title: "4 bedrooms", description: "Sleeps 8 comfortably" },
-  { title: "Open kitchen", description: "Fully equipped, BBQ, alfresco dining" },
+  { title: "Four bedrooms", description: "Sleeps eight comfortably" },
+  { title: "Open kitchen", description: "Fully equipped, BBQ, alfresco" },
   { title: "Mas Nou", description: "Quiet hillside neighbourhood" },
-  { title: "Golf next door", description: "On the Mas Nou golf course" },
-  { title: "Fast Wi-Fi", description: "Work from the terrace if you must" },
+  { title: "Golf next door", description: "On the Mas Nou course" },
+  { title: "Fast Wi-Fi", description: "Work from the terrace" },
 ];
 
 export function VillaOverview() {
   return (
     <section
       id="overview"
-      className="mx-auto max-w-6xl px-5 pt-24 sm:px-6 sm:pt-32 sm:pb-16 pb-12"
+      className="relative mx-auto max-w-7xl px-5 pt-16 sm:px-8 sm:pt-24 lg:pt-32"
     >
-      <div className="grid gap-12 md:grid-cols-2 md:items-start md:gap-16">
+      <SectionMark number="I" label="The villa" />
+
+      <div className="mt-10 grid gap-12 lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-20">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-ink/55">
-            The villa
-          </p>
-          <h2 className="mt-2 font-display text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">
-            White walls, pine, and the bay below
-          </h2>
-          <p className="mt-5 text-base leading-relaxed text-ink/75 sm:text-lg">
-            Our family villa sits in Mas Nou, a calm residential neighbourhood
-            on the hillside above Platja d&apos;Aro. From the terrace you look
-            out over umbrella pines and the Mediterranean. It&apos;s a great
-            base for exploring the Costa Brava — from coves and beaches to the
-            medieval towns of the Empordà.
+          <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-tight text-ink sm:text-7xl lg:text-[5.5rem]">
+            White walls,
+            <br />
+            <span className="italic text-terracotta">pine</span>, and the
+            <br />
+            bay <span className="italic">below</span>.
+          </h1>
+        </div>
+
+        <div className="lg:pb-3">
+          <p className="text-base leading-relaxed text-ink/75 sm:text-lg">
+            Our family villa sits in <strong className="font-medium text-ink">Mas Nou</strong>,
+            a calm residential hillside above Platja d&apos;Aro. From the
+            terrace you look out over umbrella pines and the Mediterranean —
+            a fifteen-minute amble down to the coves of the Costa Brava.
           </p>
           <p className="mt-4 text-base leading-relaxed text-ink/75 sm:text-lg">
-            We rent it to friends, family and a small number of guests each
-            year. Reach out with your dates and we&apos;ll confirm by email.
+            We let it to friends, family, and a small number of guests each
+            year. Bring your people, pick your dates, we&apos;ll reply by
+            email.
           </p>
+          <div className="mt-6 flex items-center gap-3 text-terracotta">
+            <span className="h-px w-12 bg-terracotta/40" />
+            <SunMark className="h-3.5 w-3.5" />
+            <span className="font-display text-sm italic">
+              Platja d&apos;Aro, Costa Brava
+            </span>
+          </div>
         </div>
-        <ul className="grid grid-cols-2 gap-3">
-          {features.map((f, i) => (
-            <li
-              key={f.title}
-              className={`rounded-2xl bg-white p-5 shadow-soft ring-1 ring-ink/5 ${
-                i % 3 === 0 ? "" : ""
-              }`}
-            >
-              <p className="font-semibold text-ink">{f.title}</p>
-              <p className="mt-1 text-sm text-ink/65">{f.description}</p>
-            </li>
-          ))}
-        </ul>
       </div>
+
+      <ol className="mt-16 grid grid-cols-1 overflow-hidden rounded-3xl bg-white/60 shadow-soft ring-1 ring-ink/5 sm:grid-cols-2 lg:grid-cols-3">
+        {features.map((f, i) => (
+          <li
+            key={f.title}
+            className={`relative flex items-start gap-4 p-6 sm:p-7 ${
+              i % 2 ? "sm:border-l sm:border-ink/5" : ""
+            } ${i % 3 !== 0 ? "lg:border-l lg:border-ink/5" : ""} ${
+              i % 2 ? "sm:[&:nth-child(odd)]:border-l-0" : ""
+            } ${i < features.length - (features.length % 2 || 2) ? "border-b border-ink/5" : ""}`}
+          >
+            <span className="font-display text-xl font-semibold italic text-terracotta">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <div>
+              <p className="font-display text-lg font-semibold text-ink">
+                {f.title}
+              </p>
+              <p className="mt-1 text-sm text-ink/65">{f.description}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
     </section>
   );
 }
