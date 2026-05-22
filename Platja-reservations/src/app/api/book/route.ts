@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { isRangeAvailable } from "@/lib/bookings";
 import { sendAdminBookingRequest, sendGuestStatusUpdate } from "@/lib/email";
 import { getCurrentUser } from "@/lib/user";
+import { calculateQuote, paymentDueFromCheckIn } from "@/lib/pricing";
 
 export const runtime = "nodejs";
 
@@ -88,6 +89,8 @@ export async function POST(req: Request) {
     );
   }
 
+  const quote = await calculateQuote(data.checkIn, data.checkOut).catch(() => null);
+
   let booking;
   try {
     booking = await prisma.booking.create({
@@ -102,6 +105,8 @@ export async function POST(req: Request) {
         message: data.message,
         status: "PENDING",
         userId: user.id,
+        totalAmountCents: quote?.totalCents ?? null,
+        paymentDueDate: paymentDueFromCheckIn(data.checkIn),
       },
     });
   } catch (err) {

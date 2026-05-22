@@ -20,8 +20,27 @@ export type AdminBooking = {
   status: "PENDING" | "TENTATIVE" | "CONFIRMED" | "DECLINED" | "CANCELLED";
   notes: string | null;
   ownerNote: string | null;
+  totalAmountCents: number | null;
+  paymentStatus: "UNPAID" | "AWAITING_VERIFICATION" | "PAID" | "REFUNDED";
+  paymentDueDate: string | null;
   createdAt: string;
 };
+
+const PAY_STYLES: Record<AdminBooking["paymentStatus"], string> = {
+  UNPAID: "bg-sunset/20 text-terracotta",
+  AWAITING_VERIFICATION: "bg-sand text-ink",
+  PAID: "bg-olive/20 text-olive",
+  REFUNDED: "bg-ink/10 text-ink/70",
+};
+
+function euro(cents: number | null): string | null {
+  if (cents == null) return null;
+  return new Intl.NumberFormat("nl-NL", {
+    style: "currency",
+    currency: "EUR",
+    minimumFractionDigits: 0,
+  }).format(cents / 100);
+}
 
 const STATUS_STYLES: Record<AdminBooking["status"], string> = {
   PENDING:   "bg-yellow-100 text-yellow-900",
@@ -120,6 +139,28 @@ export function AdminDashboard({ bookings: initial }: { bookings: AdminBooking[]
     }
   }
 
+  async function setPaymentStatus(
+    b: AdminBooking,
+    paymentStatus: AdminBooking["paymentStatus"],
+  ): Promise<void> {
+    setBusyId(b.id);
+    setError(null);
+    const res = await fetch(`/api/admin/bookings/${b.id}/payment`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ paymentStatus }),
+    });
+    setBusyId(null);
+    if (!res.ok) {
+      const j = await res.json().catch(() => ({}));
+      setError(j.error ?? "Could not update payment");
+      return;
+    }
+    setBookings((bs) =>
+      bs.map((x) => (x.id === b.id ? { ...x, paymentStatus } : x)),
+    );
+  }
+
   async function remove(b: AdminBooking): Promise<void> {
     if (!confirm(`Delete booking from ${b.name}? This cannot be undone.`)) return;
     setBusyId(b.id);
@@ -141,6 +182,12 @@ export function AdminDashboard({ bookings: initial }: { bookings: AdminBooking[]
           <h1 className="mt-1 font-display text-3xl font-semibold sm:text-4xl">Planning</h1>
         </div>
         <div className="flex gap-2">
+          <Link
+            href="/admin/rates"
+            className="rounded-full bg-white px-4 py-2 text-sm font-medium shadow-soft ring-1 ring-ink/10 hover:bg-ink/5"
+          >
+            Rates
+          </Link>
           <Link
             href="/admin/restaurants"
             className="rounded-full bg-white px-4 py-2 text-sm font-medium shadow-soft ring-1 ring-ink/10 hover:bg-ink/5"
@@ -221,6 +268,45 @@ export function AdminDashboard({ bookings: initial }: { bookings: AdminBooking[]
                   >
                     {b.status}
                   </span>
+                </div>
+
+                <div className="mt-3 flex flex-wrap items-center gap-3 rounded-xl bg-whitewash px-4 py-3">
+                  <div className="flex-1">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-ink/55">
+                      Payment
+                    </p>
+                    <p className="mt-0.5 font-display text-lg font-semibold text-ink">
+                      {euro(b.totalAmountCents) ?? "Price on request"}
+                      {b.paymentDueDate && b.paymentStatus !== "PAID" && (
+                        <span className="ml-2 text-xs font-normal text-ink/55">
+                          due {format(parseISO(b.paymentDueDate), "d MMM")}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-medium ${PAY_STYLES[b.paymentStatus]}`}
+                  >
+                    {b.paymentStatus.replace("_", " ").toLowerCase()}
+                  </span>
+                  {b.paymentStatus !== "PAID" && (
+                    <button
+                      onClick={() => setPaymentStatus(b, "PAID")}
+                      disabled={busyId === b.id}
+                      className="rounded-full bg-olive px-3 py-1.5 text-xs font-medium text-whitewash hover:bg-olive/90 disabled:opacity-50"
+                    >
+                      Mark paid
+                    </button>
+                  )}
+                  {b.paymentStatus === "PAID" && (
+                    <button
+                      onClick={() => setPaymentStatus(b, "UNPAID")}
+                      disabled={busyId === b.id}
+                      className="rounded-full px-3 py-1.5 text-xs font-medium text-ink/60 hover:bg-ink/5 disabled:opacity-50"
+                    >
+                      Unmark
+                    </button>
+                  )}
                 </div>
 
                 {names.length > 0 && (

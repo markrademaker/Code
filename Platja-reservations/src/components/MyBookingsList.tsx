@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { format, parseISO } from "date-fns";
 import { MessageThread } from "@/components/MessageThread";
+import { formatEuro } from "@/lib/pricing";
 
 type Booking = {
   id: string;
@@ -13,7 +15,24 @@ type Booking = {
   message: string | null;
   status: "PENDING" | "TENTATIVE" | "CONFIRMED" | "DECLINED" | "CANCELLED";
   ownerNote: string | null;
+  totalAmountCents: number | null;
+  paymentStatus: "UNPAID" | "AWAITING_VERIFICATION" | "PAID" | "REFUNDED";
+  paymentDueDate: string | null;
   createdAt: string;
+};
+
+const PAY_STATUS_LABEL: Record<Booking["paymentStatus"], string> = {
+  UNPAID: "Unpaid",
+  AWAITING_VERIFICATION: "Payment under review",
+  PAID: "Paid",
+  REFUNDED: "Refunded",
+};
+
+const PAY_STATUS_STYLES: Record<Booking["paymentStatus"], string> = {
+  UNPAID: "bg-sunset/20 text-terracotta",
+  AWAITING_VERIFICATION: "bg-sand text-ink",
+  PAID: "bg-olive/20 text-olive",
+  REFUNDED: "bg-ink/10 text-ink/70",
 };
 
 const STATUS_STYLES: Record<Booking["status"], string> = {
@@ -104,6 +123,41 @@ export function MyBookingsList({ bookings: initial }: { bookings: Booking[] }) {
                 <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-ink">
                   {b.ownerNote}
                 </p>
+              </div>
+            )}
+
+            {(b.status === "CONFIRMED" || b.status === "TENTATIVE") && (
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-whitewash p-4 ring-1 ring-ink/5">
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-ink/55">
+                    {b.totalAmountCents != null ? "Total" : "Total"}
+                  </p>
+                  <p className="font-display text-2xl font-semibold text-ink">
+                    {b.totalAmountCents != null
+                      ? formatEuro(b.totalAmountCents)
+                      : "Price on request"}
+                  </p>
+                  {b.paymentDueDate && b.paymentStatus !== "PAID" && (
+                    <p className="text-xs text-ink/60">
+                      Due {format(parseISO(b.paymentDueDate), "d MMM yyyy")}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-medium ${PAY_STATUS_STYLES[b.paymentStatus]}`}
+                  >
+                    {PAY_STATUS_LABEL[b.paymentStatus]}
+                  </span>
+                  {b.paymentStatus !== "PAID" && b.totalAmountCents != null && (
+                    <Link
+                      href={`/pay/${b.id}`}
+                      className="rounded-full bg-ocean px-4 py-2 text-sm font-medium text-whitewash shadow-glow hover:bg-ocean/90"
+                    >
+                      Pay
+                    </Link>
+                  )}
+                </div>
               </div>
             )}
 

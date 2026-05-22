@@ -18,6 +18,9 @@ export default async function AdminPage() {
     status: b.status,
     notes: b.notes,
     ownerNote: b.ownerNote,
+    totalAmountCents: b.totalAmountCents,
+    paymentStatus: b.paymentStatus,
+    paymentDueDate: b.paymentDueDate ? b.paymentDueDate.toISOString().slice(0, 10) : null,
     createdAt: b.createdAt.toISOString(),
   }));
   return <AdminDashboard bookings={serialized} />;

@@ -30,6 +30,9 @@ export default async function MyBookingsPage() {
     message: b.message,
     status: b.status,
     ownerNote: b.ownerNote,
+    totalAmountCents: b.totalAmountCents,
+    paymentStatus: b.paymentStatus,
+    paymentDueDate: b.paymentDueDate ? b.paymentDueDate.toISOString().slice(0, 10) : null,
     createdAt: b.createdAt.toISOString(),
   }));
 
