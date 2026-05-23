@@ -62,7 +62,7 @@ export function BookingForm({ user }: { user: BookingFormUser | null }) {
         <div className="grid gap-10 rounded-[2rem] bg-white p-8 shadow-soft ring-1 ring-ink/5 sm:p-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
           <div>
             <SectionMark number="III" label="Reserve" />
-            <h2 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl">
+            <h2 className="mt-4 font-display text-4xl font-light leading-[1.05] tracking-tightish sm:text-5xl">
               Sign in to book
               <br />
               <span className="italic text-terracotta">in seconds</span>.
@@ -137,7 +137,7 @@ export function BookingForm({ user }: { user: BookingFormUser | null }) {
       <div className="grid gap-10 lg:grid-cols-[1fr_1.3fr] lg:gap-20">
         <aside className="lg:sticky lg:top-28 lg:self-start">
           <SectionMark number="III" label="Reserve" />
-          <h2 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
+          <h2 className="mt-4 font-display text-4xl font-light leading-[1.05] tracking-tightish sm:text-5xl lg:text-6xl">
             Request <span className="italic text-terracotta">your</span>
             <br />
             dates.

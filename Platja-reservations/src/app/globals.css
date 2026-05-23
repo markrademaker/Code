@@ -2,14 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Theme tokens. Each colour is stored as three space-separated RGB
+ * channels so Tailwind utilities like `bg-ink/40` can apply alpha.
+ * To swap the theme, add `data-theme="<name>"` on <html> and define
+ * the new tokens below.
+ */
+:root {
+  --color-whitewash: 250 246 236;
+  --color-sand: 237 224 195;
+  --color-stone: 201 184 150;
+  --color-sea: 160 133 96;
+  --color-ocean: 61 47 36;
+  --color-terracotta: 201 123 91;
+  --color-sunset: 232 168 124;
+  --color-olive: 138 154 91;
+  --color-ink: 61 47 36;
+  --color-deep: 61 47 36;
+}
+
+[data-theme="seaside"] {
+  --color-whitewash: 243 248 250;
+  --color-sand: 217 232 234;
+  --color-stone: 162 191 198;
+  --color-sea: 64 132 144;
+  --color-ocean: 22 60 73;
+  --color-terracotta: 211 113 95;
+  --color-sunset: 240 167 130;
+  --color-olive: 116 156 124;
+  --color-ink: 22 60 73;
+  --color-deep: 22 60 73;
+}
+
+[data-theme="midnight"] {
+  --color-whitewash: 18 22 30;
+  --color-sand: 35 40 52;
+  --color-stone: 78 86 104;
+  --color-sea: 150 122 92;
+  --color-ocean: 232 220 195;
+  --color-terracotta: 222 132 100;
+  --color-sunset: 233 172 132;
+  --color-olive: 156 168 110;
+  --color-ink: 232 220 195;
+  --color-deep: 232 220 195;
+}
+
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
-  @apply bg-whitewash text-ink antialiased;
-  font-feature-settings: "ss01", "ss02";
+  @apply bg-whitewash text-ink antialiased font-sans;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-feature-settings: "ss01", "ss02", "lnum";
 }
 
 input,
@@ -19,5 +72,5 @@ textarea {
 }
 
 ::selection {
-  background: rgba(79, 168, 168, 0.25);
+  background: rgb(var(--color-sea) / 0.25);
 }

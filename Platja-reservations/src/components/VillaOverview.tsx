@@ -19,7 +19,7 @@ export function VillaOverview() {
 
       <div className="mt-10 grid gap-12 lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-20">
         <div>
-          <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-tight text-ink sm:text-7xl lg:text-[5.5rem]">
+          <h1 className="font-display text-4xl font-light leading-[1.05] tracking-tightish text-ink sm:text-5xl lg:text-7xl">
             White walls,
             <br />
             <span className="italic text-terracotta">pine</span>, and the
@@ -29,13 +29,13 @@ export function VillaOverview() {
         </div>
 
         <div className="lg:pb-3">
-          <p className="text-base leading-relaxed text-ink/75 sm:text-lg">
+          <p className="text-sm leading-relaxed text-ink/70 sm:text-base">
             Our family villa sits in <strong className="font-medium text-ink">Mas Nou</strong>,
             a calm residential hillside above Platja d&apos;Aro. From the
             terrace you look out over umbrella pines and the Mediterranean —
             a fifteen-minute amble down to the coves of the Costa Brava.
           </p>
-          <p className="mt-4 text-base leading-relaxed text-ink/75 sm:text-lg">
+          <p className="mt-3 text-sm leading-relaxed text-ink/70 sm:text-base">
             We let it to friends, family, and a small number of guests each
             year. Bring your people, pick your dates, we&apos;ll reply by
             email.
@@ -60,14 +60,14 @@ export function VillaOverview() {
               i % 2 ? "sm:[&:nth-child(odd)]:border-l-0" : ""
             } ${i < features.length - (features.length % 2 || 2) ? "border-b border-ink/5" : ""}`}
           >
-            <span className="font-display text-xl font-semibold italic text-terracotta">
+            <span className="font-display text-xl font-light italic text-terracotta">
               {String(i + 1).padStart(2, "0")}
             </span>
             <div>
-              <p className="font-display text-lg font-semibold text-ink">
+              <p className="font-display text-lg font-normal text-ink">
                 {f.title}
               </p>
-              <p className="mt-1 text-sm text-ink/65">{f.description}</p>
+              <p className="mt-1 text-sm text-ink/60">{f.description}</p>
             </div>
           </li>
         ))}
