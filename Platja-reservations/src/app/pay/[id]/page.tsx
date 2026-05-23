@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/user";
 import { formatEuro } from "@/lib/pricing";
 import { isStripeConfigured } from "@/lib/stripe";
 import { PayBookingActions } from "@/components/PayBookingActions";
+import { SectionMark } from "@/components/Marks";
 
 export const dynamic = "force-dynamic";
 
@@ -43,22 +44,35 @@ export default async function PayPage({ params }: { params: { id: string } }) {
     : null;
 
   return (
-    <main className="mx-auto max-w-2xl px-5 py-10 sm:px-6 sm:py-14">
+    <main className="mx-auto max-w-7xl px-5 pt-16 pb-20 sm:px-8 sm:pt-24 sm:pb-28">
       <Link href="/my-bookings" className="text-sm text-ocean hover:underline">
         ← Back to my bookings
       </Link>
-      <p className="mt-4 text-xs uppercase tracking-[0.2em] text-ink/55">Payment</p>
-      <h1 className="mt-1 font-display text-3xl font-semibold sm:text-4xl">
-        {booking.totalAmountCents != null
-          ? formatEuro(booking.totalAmountCents)
-          : "Total to be confirmed"}
-      </h1>
-      <p className="mt-2 text-base text-ink/70 sm:text-lg">
-        {format(parseISO(checkIn), "EEE d MMM yyyy")} →{" "}
-        {format(parseISO(checkOut), "EEE d MMM yyyy")}
-      </p>
+      <div className="mt-6">
+        <SectionMark number="X" label="Payment" />
+      </div>
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-20">
+        <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-tight text-ink sm:text-7xl lg:text-[5.5rem]">
+          {booking.totalAmountCents != null ? (
+            <>
+              <span className="italic text-terracotta">Pay</span>{" "}
+              {formatEuro(booking.totalAmountCents)}.
+            </>
+          ) : (
+            <>
+              Total <span className="italic text-terracotta">to be</span>
+              <br />
+              confirmed.
+            </>
+          )}
+        </h1>
+        <p className="text-base leading-relaxed text-ink/75 sm:text-lg lg:pb-3">
+          {format(parseISO(checkIn), "EEE d MMM yyyy")} →{" "}
+          {format(parseISO(checkOut), "EEE d MMM yyyy")}
+        </p>
+      </div>
 
-      <section className="mt-8 rounded-3xl bg-white p-6 shadow-soft ring-1 ring-ink/5 sm:p-7">
+      <section className="mt-14 max-w-2xl rounded-3xl bg-white p-6 shadow-soft ring-1 ring-ink/5 sm:p-7">
         <h2 className="font-display text-xl font-semibold">Bank transfer</h2>
         <p className="mt-2 text-sm text-ink/70">
           Pay by transfer to the account below. We&apos;ll mark your booking as
@@ -89,12 +103,14 @@ export default async function PayPage({ params }: { params: { id: string } }) {
         )}
       </section>
 
+      <div className="max-w-2xl">
       <PayBookingActions
         bookingId={booking.id}
         paymentStatus={booking.paymentStatus}
         hasAmount={booking.totalAmountCents != null && booking.totalAmountCents > 0}
         stripeConfigured={isStripeConfigured()}
       />
+      </div>
     </main>
   );
 }

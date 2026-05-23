@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
+import { SectionMark } from "@/components/Marks";
 
 export const metadata: Metadata = {
   title: "Restaurant book — Villa Mas Nou",
@@ -29,24 +30,27 @@ export default async function RestaurantsPage() {
     .catch(() => []);
 
   return (
-    <main className="mx-auto max-w-6xl px-5 py-12 sm:px-6 sm:py-16">
-      <p className="text-xs uppercase tracking-[0.2em] text-ink/55">
-        Where to eat
-      </p>
-      <h1 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-        Restaurant book
-      </h1>
-      <p className="mt-3 max-w-2xl text-base text-ink/70 sm:text-lg">
-        Our favourite places to eat around the villa. Book a couple of days
-        ahead in summer — the good ones fill up.
-      </p>
+    <main className="mx-auto max-w-7xl px-5 pt-16 pb-20 sm:px-8 sm:pt-24 sm:pb-28">
+      <SectionMark number="VI" label="Where we eat" />
+
+      <div className="mt-10 grid gap-10 lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-20">
+        <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-tight text-ink sm:text-7xl lg:text-[5.5rem]">
+          The
+          <br />
+          <span className="italic text-terracotta">restaurant</span> book.
+        </h1>
+        <p className="text-base leading-relaxed text-ink/75 sm:text-lg lg:pb-3">
+          Our favourite places to eat around the villa. Book a couple of days
+          ahead in summer — the good ones fill up.
+        </p>
+      </div>
 
       {restaurants.length === 0 ? (
-        <div className="mt-10 rounded-3xl bg-white p-8 text-center text-ink/60 shadow-soft ring-1 ring-ink/5">
+        <div className="mt-14 rounded-3xl bg-white p-8 text-center text-ink/60 shadow-soft ring-1 ring-ink/5">
           We&apos;re still building the list — check back soon.
         </div>
       ) : (
-        <ul className="mt-10 grid gap-4 sm:grid-cols-2">
+        <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {restaurants.map((r) => (
             <li
               key={r.id}

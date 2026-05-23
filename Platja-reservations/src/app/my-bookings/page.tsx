@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/user";
 import { MyBookingsList } from "@/components/MyBookingsList";
+import { SectionMark } from "@/components/Marks";
 
 export const dynamic = "force-dynamic";
 
@@ -37,17 +38,23 @@ export default async function MyBookingsPage() {
   }));
 
   return (
-    <main className="mx-auto max-w-3xl px-5 py-12 sm:px-6 sm:py-16">
-      <p className="text-xs uppercase tracking-[0.2em] text-ink/55">Account</p>
-      <h1 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-        My bookings
-      </h1>
-      <p className="mt-3 text-base text-ink/70 sm:text-lg">
-        Every request you&apos;ve made and where it stands. You can cancel a
-        booking that isn&apos;t closed yet.
-      </p>
+    <main className="mx-auto max-w-7xl px-5 pt-16 pb-20 sm:px-8 sm:pt-24 sm:pb-28">
+      <SectionMark number="IX" label="Account" />
 
-      <div className="mt-8">
+      <div className="mt-10 grid gap-10 lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-20">
+        <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-tight text-ink sm:text-7xl lg:text-[5.5rem]">
+          My
+          <br />
+          <span className="italic text-terracotta">bookings</span>.
+        </h1>
+        <p className="text-base leading-relaxed text-ink/75 sm:text-lg lg:pb-3">
+          Every request you&apos;ve made and where it stands. You can cancel a
+          booking that isn&apos;t closed yet, message the owners, or pay for
+          a confirmed stay.
+        </p>
+      </div>
+
+      <div className="mt-14 lg:max-w-3xl">
         <MyBookingsList bookings={serialized} />
       </div>
 
