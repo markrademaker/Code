@@ -52,7 +52,7 @@ export default async function PayPage({ params }: { params: { id: string } }) {
         <SectionMark number="X" label="Payment" />
       </div>
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-20">
-        <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-tight text-ink sm:text-7xl lg:text-[5.5rem]">
+        <h1 className="font-display text-4xl font-light leading-[1.05] tracking-tightish text-ink sm:text-5xl lg:text-7xl">
           {booking.totalAmountCents != null ? (
             <>
               <span className="italic text-terracotta">Pay</span>{" "}

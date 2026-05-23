@@ -34,7 +34,7 @@ export default async function RestaurantsPage() {
       <SectionMark number="VI" label="Where we eat" />
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-20">
-        <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-tight text-ink sm:text-7xl lg:text-[5.5rem]">
+        <h1 className="font-display text-4xl font-light leading-[1.05] tracking-tightish text-ink sm:text-5xl lg:text-7xl">
           The
           <br />
           <span className="italic text-terracotta">restaurant</span> book.

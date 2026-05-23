@@ -89,7 +89,7 @@ export function AvailabilityCalendar({ bookings }: { bookings: Booking[] }) {
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-xl">
             <SectionMark number="II" label="When are you free?" />
-            <h2 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-6xl">
+            <h2 className="mt-4 font-display text-4xl font-light leading-[1.05] tracking-tightish sm:text-5xl lg:text-6xl">
               Pick a <span className="italic text-terracotta">week</span>.
             </h2>
           </div>

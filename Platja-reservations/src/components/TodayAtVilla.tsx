@@ -81,15 +81,15 @@ export async function TodayAtVilla() {
             <p className="font-display text-sm uppercase tracking-[0.25em] text-ink/55">
               Right now {dayPart()} at the villa
             </p>
-            <div className="mt-6 flex items-baseline gap-6">
-              <span className="font-display text-[6.5rem] font-semibold leading-none text-ink sm:text-[9rem]">
+            <div className="mt-6 flex items-baseline gap-5">
+              <span className="font-display text-[5rem] font-light leading-none tracking-tightish text-ink sm:text-[7rem]">
                 {Math.round(today.temperatureC)}°
               </span>
-              <span className="text-5xl sm:text-7xl" aria-hidden>
+              <span className="text-4xl sm:text-6xl" aria-hidden>
                 {icon}
               </span>
             </div>
-            <p className="mt-4 font-display text-2xl italic text-ink/75 sm:text-3xl">
+            <p className="mt-3 font-display text-xl font-light italic text-ink/70 sm:text-2xl">
               {label}
             </p>
             <p className="mt-2 text-sm text-ink/55">
