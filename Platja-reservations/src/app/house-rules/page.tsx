@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SectionMark } from "@/components/Marks";
 
 export const metadata: Metadata = {
   title: "House rules — Villa Mas Nou",
@@ -57,17 +58,22 @@ const RULES: { title: string; items: string[] }[] = [
 
 export default function HouseRulesPage() {
   return (
-    <main className="mx-auto max-w-3xl px-5 py-12 sm:px-6 sm:py-16">
-      <p className="text-xs uppercase tracking-[0.2em] text-ink/55">Before you arrive</p>
-      <h1 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-        House rules
-      </h1>
-      <p className="mt-3 text-base text-ink/70 sm:text-lg">
-        Nothing scary — just the things that keep the villa and the
-        neighbourhood happy.
-      </p>
+    <main className="mx-auto max-w-7xl px-5 pt-16 pb-20 sm:px-8 sm:pt-24 sm:pb-28">
+      <SectionMark number="VII" label="Before you arrive" />
 
-      <div className="mt-10 grid gap-4">
+      <div className="mt-10 grid gap-10 lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-20">
+        <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-tight text-ink sm:text-7xl lg:text-[5.5rem]">
+          House
+          <br />
+          <span className="italic text-terracotta">rules</span>.
+        </h1>
+        <p className="text-base leading-relaxed text-ink/75 sm:text-lg lg:pb-3">
+          Nothing scary — just the things that keep the villa and the
+          neighbourhood happy.
+        </p>
+      </div>
+
+      <div className="mt-14 grid gap-4 lg:max-w-3xl">
         {RULES.map((s) => (
           <section
             key={s.title}

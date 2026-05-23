@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { format, parseISO } from "date-fns";
 import { fetchForecast, describeWeatherCode } from "@/lib/weather";
 import { PLATJA_CLIMATE } from "@/lib/climate";
+import { SectionMark } from "@/components/Marks";
 
 export const metadata: Metadata = {
   title: "Weather — Villa Mas Nou",
@@ -16,22 +17,23 @@ export default async function WeatherPage() {
   const currentMonthIndex = new Date().getMonth();
 
   return (
-    <main className="mx-auto max-w-6xl px-5 py-10 sm:px-6 sm:py-14">
-      <header>
-        <p className="text-xs uppercase tracking-[0.25em] text-deep/60 sm:text-sm">
-          Platja d&apos;Aro · Costa Brava
-        </p>
-        <h1 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-          Weather
-        </h1>
-        <p className="mt-3 max-w-2xl text-base text-deep/70 sm:text-lg">
-          A live 7-day forecast for the villa, plus the typical climate for
-          each month so you can plan your stay.
-        </p>
-      </header>
+    <main className="mx-auto max-w-7xl px-5 pt-16 pb-20 sm:px-8 sm:pt-24 sm:pb-28">
+      <SectionMark number="V" label="Costa Brava forecast" />
 
-      <section className="mt-10">
-        <h2 className="font-display text-xl font-semibold sm:text-2xl">
+      <div className="mt-10 grid gap-10 lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-20">
+        <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-tight text-ink sm:text-7xl lg:text-[5.5rem]">
+          Sun, <span className="italic text-terracotta">sea</span>,
+          <br />
+          and the in-between.
+        </h1>
+        <p className="text-base leading-relaxed text-ink/75 sm:text-lg lg:pb-3">
+          A live seven-day forecast for the villa, plus the typical climate
+          for each month so you can plan your stay.
+        </p>
+      </div>
+
+      <section className="mt-16">
+        <h2 className="font-display text-2xl font-semibold sm:text-3xl">
           Next 7 days
         </h2>
         {forecast ? (
@@ -95,8 +97,8 @@ export default async function WeatherPage() {
         )}
       </section>
 
-      <section className="mt-14">
-        <h2 className="font-display text-xl font-semibold sm:text-2xl">
+      <section className="mt-20">
+        <h2 className="font-display text-2xl font-semibold sm:text-3xl">
           Typical weather by month
         </h2>
         <p className="mt-2 max-w-2xl text-sm text-deep/70 sm:text-base">

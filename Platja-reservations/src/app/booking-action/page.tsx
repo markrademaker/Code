@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SectionMark } from "@/components/Marks";
 
 const MESSAGES: Record<string, { title: string; body: (g?: string, s?: string) => string }> = {
   ok: {
@@ -31,12 +32,20 @@ export default function BookingActionPage({
   const key = searchParams.state ?? "invalid";
   const m = MESSAGES[key] ?? MESSAGES.invalid;
   return (
-    <main className="mx-auto max-w-2xl px-5 py-20 sm:px-6">
-      <h1 className="font-display text-3xl font-semibold sm:text-4xl">{m.title}</h1>
-      <p className="mt-4 text-lg text-deep/80">{m.body(searchParams.guest, searchParams.status)}</p>
+    <main className="mx-auto max-w-7xl px-5 pt-16 pb-20 sm:px-8 sm:pt-24 sm:pb-28">
+      <SectionMark number="VIII" label="Email action" />
+      <div className="mt-10 grid gap-10 lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-20">
+        <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-tight text-ink sm:text-7xl lg:text-[5.5rem]">
+          {m.title}
+          <span className="text-terracotta">.</span>
+        </h1>
+        <p className="text-base leading-relaxed text-ink/75 sm:text-lg lg:pb-3">
+          {m.body(searchParams.guest, searchParams.status)}
+        </p>
+      </div>
       <Link
         href="/admin"
-        className="mt-8 inline-block rounded-full bg-deep px-6 py-3 font-medium text-white"
+        className="mt-12 inline-block rounded-full bg-ocean px-7 py-3.5 font-medium text-whitewash shadow-glow hover:bg-ocean/90"
       >
         Open admin dashboard
       </Link>
