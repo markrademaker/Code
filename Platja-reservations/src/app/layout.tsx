@@ -20,10 +20,60 @@ const sans = Inter({
   display: "swap",
 });
 
+function getBaseUrl(): string {
+  return (
+    process.env.APP_BASE_URL?.replace(/\/$/, "") ??
+    process.env.NEXT_PUBLIC_APP_BASE_URL?.replace(/\/$/, "") ??
+    "https://platja-reservations.vercel.app"
+  );
+}
+
 export const metadata: Metadata = {
-  title: "Villa Mas Nou — Platja d'Aro Reservations",
+  metadataBase: new URL(getBaseUrl()),
+  title: {
+    default: "Villa Mas Nou — Platja d'Aro, Costa Brava",
+    template: "%s · Villa Mas Nou",
+  },
   description:
-    "Reserve our villa in Mas Nou, near Platja d'Aro on the Costa Brava. View availability and request a booking.",
+    "Whitewashed family villa with a private pool above Platja d'Aro on the Costa Brava. Sleeps eight in four bedrooms, golf next door, the cove five minutes away.",
+  keywords: [
+    "Villa Mas Nou",
+    "Platja d'Aro",
+    "Costa Brava villa",
+    "villa rental Spain",
+    "Mas Nou holiday rental",
+    "Catalonia villa",
+    "private pool villa Costa Brava",
+  ],
+  authors: [{ name: "Villa Mas Nou" }],
+  openGraph: {
+    type: "website",
+    locale: "en_GB",
+    url: getBaseUrl(),
+    siteName: "Villa Mas Nou",
+    title: "Villa Mas Nou — Platja d'Aro, Costa Brava",
+    description:
+      "Whitewashed family villa with a private pool above Platja d'Aro. Sleeps eight, golf next door, the cove five minutes away.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Villa Mas Nou — Platja d'Aro, Costa Brava",
+    description:
+      "Whitewashed family villa with a private pool above Platja d'Aro.",
+  },
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export const viewport: Viewport = {

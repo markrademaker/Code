@@ -5,9 +5,10 @@ import { PLATJA_CLIMATE } from "@/lib/climate";
 import { SectionMark } from "@/components/Marks";
 
 export const metadata: Metadata = {
-  title: "Weather — Villa Mas Nou",
+  title: "Weather in Platja d'Aro",
   description:
-    "Live 7-day forecast for Platja d'Aro plus typical climate by month, to help you plan your stay.",
+    "Live seven-day forecast for Platja d'Aro on the Costa Brava plus typical monthly climate so you can plan when to visit Villa Mas Nou.",
+  alternates: { canonical: "/weather" },
 };
 
 export const revalidate = 1800;

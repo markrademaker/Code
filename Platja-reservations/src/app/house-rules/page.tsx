@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { SectionMark } from "@/components/Marks";
 
 export const metadata: Metadata = {
-  title: "House rules — Villa Mas Nou",
-  description: "Everything to know before your stay at the villa.",
+  title: "House rules",
+  description:
+    "Everything to know before your stay at Villa Mas Nou — arrival, departure, pool, quiet hours, pets, and the security deposit.",
+  alternates: { canonical: "/house-rules" },
 };
 
 const RULES: { title: string; items: string[] }[] = [

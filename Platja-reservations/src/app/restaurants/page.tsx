@@ -4,9 +4,10 @@ import { prisma } from "@/lib/db";
 import { SectionMark } from "@/components/Marks";
 
 export const metadata: Metadata = {
-  title: "Restaurant book — Villa Mas Nou",
+  title: "Where to eat around Platja d'Aro",
   description:
-    "Our favourite places to eat around Platja d'Aro and the Costa Brava.",
+    "Our favourite restaurants around Platja d'Aro and the Costa Brava — tapas, seafood, sunset dinners, and Sunday lunches.",
+  alternates: { canonical: "/restaurants" },
 };
 
 export const dynamic = "force-dynamic";
