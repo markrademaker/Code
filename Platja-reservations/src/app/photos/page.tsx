@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { SectionMark } from "@/components/Marks";
 
 export const metadata: Metadata = {
-  title: "Photos — Villa Mas Nou",
-  description: "Photos of the villa, the views and the surroundings.",
+  title: "Photos",
+  description:
+    "Photos of Villa Mas Nou — the pool, the terrace, the bedrooms, and the views over Platja d'Aro.",
+  alternates: { canonical: "/photos" },
 };
 
 export default function PhotosPage() {
