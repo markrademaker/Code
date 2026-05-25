@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
+import { VillaSlideshow } from "@/components/VillaSlideshow";
 import {
   DEFAULT_VILLA_IMAGES,
-  VillaSlideshow,
   type SlideshowImage,
-} from "@/components/VillaSlideshow";
+} from "@/lib/villa-images";
 
 export function SiteShell({
   children,
