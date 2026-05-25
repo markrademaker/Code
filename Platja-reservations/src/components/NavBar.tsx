@@ -26,7 +26,7 @@ export function NavBar({
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  if (pathname === "/login") return null;
+  if (pathname === "/login" || pathname === "/admin/login") return null;
 
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
