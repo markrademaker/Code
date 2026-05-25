@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { TodayAtVilla } from "@/components/TodayAtVilla";
+import { VillaSlideshow } from "@/components/VillaSlideshow";
+import { Hero } from "@/components/Hero";
+import { PullQuote } from "@/components/PullQuote";
 import { VillaOverview } from "@/components/VillaOverview";
 import { Nearby } from "@/components/Nearby";
 import { AvailabilityCalendar } from "@/components/AvailabilityCalendar";
@@ -52,24 +54,51 @@ export default async function HomePage() {
     getBlockingBookings().catch(() => []),
     getCurrentUser(),
   ]);
+
+  const FROST = 80;
+
   return (
-    <main>
+    <>
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(lodgingJsonLd) }}
       />
-      <VillaOverview />
-      <Divider />
-      <AvailabilityCalendar bookings={bookings} />
-      <BookingForm user={user} />
-      <TodayAtVilla />
-      <Nearby />
-      <footer className="border-t border-ink/10 bg-whitewash py-16 text-center text-sm text-ink/55">
-        <p className="font-display text-2xl italic text-ink/70">Villa Mas Nou</p>
-        <p className="mt-2 text-xs uppercase tracking-[0.3em]">Platja d&apos;Aro · Costa Brava</p>
-        <p className="mt-6 text-xs">© {new Date().getFullYear()}</p>
-      </footer>
-    </main>
+      <VillaSlideshow mode="kenburns" darkOverlay={28} />
+
+      <div className="relative" style={{ zIndex: 1 }}>
+        <main className="relative">
+          <Hero />
+
+          <div className="space-y-24 pb-24 sm:space-y-32">
+            <VillaOverview frostStrength={FROST} />
+            <Divider light />
+            <PullQuote />
+            <AvailabilityCalendar bookings={bookings} frostStrength={FROST} />
+            <BookingForm user={user} frostStrength={FROST} />
+            <Nearby frostStrength={FROST} />
+          </div>
+
+          <footer
+            className="relative mt-32 border-t border-whitewash/25 py-16 text-center"
+            style={{
+              background: "rgba(28,22,16,0.55)",
+              backdropFilter: "blur(14px) saturate(150%)",
+              WebkitBackdropFilter: "blur(14px) saturate(150%)",
+            }}
+          >
+            <p className="font-display text-3xl italic text-whitewash">
+              Villa Mas Nou
+            </p>
+            <p className="mt-2 text-[11px] uppercase tracking-[0.3em] text-whitewash/70">
+              Platja d&apos;Aro · Costa Brava
+            </p>
+            <p className="mt-6 text-xs text-whitewash/55">
+              © {new Date().getFullYear()}
+            </p>
+          </footer>
+        </main>
+      </div>
+    </>
   );
 }

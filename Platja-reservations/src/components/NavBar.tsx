@@ -29,7 +29,14 @@ export function NavBar({ user }: { user: NavUser }) {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-ink/10 bg-whitewash/85 backdrop-blur">
+    <header
+      className="sticky top-0 z-30 border-b border-white/25"
+      style={{
+        background: "rgba(250,246,236,0.72)",
+        backdropFilter: "blur(18px) saturate(150%)",
+        WebkitBackdropFilter: "blur(18px) saturate(150%)",
+      }}
+    >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-4 sm:px-8 sm:py-5">
         <Link href="/" className="group flex items-baseline gap-2.5">
           <span className="text-terracotta transition group-hover:rotate-45">

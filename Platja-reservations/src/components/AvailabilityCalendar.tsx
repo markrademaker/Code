@@ -17,6 +17,7 @@ import {
 } from "date-fns";
 import type { PublicBooking as Booking } from "@/lib/bookings";
 import { SectionMark } from "@/components/Marks";
+import { Frost } from "@/components/Frost";
 
 const WEEKDAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
@@ -76,7 +77,13 @@ function Month({
   );
 }
 
-export function AvailabilityCalendar({ bookings }: { bookings: Booking[] }) {
+export function AvailabilityCalendar({
+  bookings,
+  frostStrength = 80,
+}: {
+  bookings: Booking[];
+  frostStrength?: number;
+}) {
   const [offset, setOffset] = useState(0);
   const months = useMemo(() => {
     const base = startOfMonth(addMonths(new Date(), offset));
@@ -84,8 +91,8 @@ export function AvailabilityCalendar({ bookings }: { bookings: Booking[] }) {
   }, [offset]);
 
   return (
-    <section id="availability" className="bg-sand/40 py-20 sm:py-28">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+    <section id="availability" className="relative mx-auto max-w-7xl px-5 sm:px-8">
+      <Frost strength={frostStrength} className="p-8 sm:p-12 lg:p-16">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-xl">
             <SectionMark number="II" label="When are you free?" />
@@ -125,7 +132,7 @@ export function AvailabilityCalendar({ bookings }: { bookings: Booking[] }) {
             <Month key={m.toISOString()} month={m} bookings={bookings} />
           ))}
         </div>
-      </div>
+      </Frost>
     </section>
   );
 }

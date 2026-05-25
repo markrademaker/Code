@@ -62,12 +62,16 @@ export function SectionMark({
   );
 }
 
-export function Divider() {
+export function Divider({ light }: { light?: boolean }) {
+  const line = light ? "bg-whitewash/30" : "bg-ink/15";
+  const sun = light ? "text-sunset/80" : "text-terracotta/70";
   return (
-    <div className="mx-auto my-2 flex max-w-6xl items-center justify-center gap-3 px-5 py-6 text-terracotta/70 sm:px-6">
-      <span className="h-px flex-1 bg-ink/15" aria-hidden />
-      <SunMark className="h-3.5 w-3.5" />
-      <span className="h-px flex-1 bg-ink/15" aria-hidden />
+    <div className="mx-auto my-2 flex max-w-6xl items-center justify-center gap-3 px-5 py-10 sm:px-6">
+      <span className={`h-px flex-1 ${line}`} aria-hidden />
+      <span className={sun}>
+        <SunMark className="h-3.5 w-3.5" />
+      </span>
+      <span className={`h-px flex-1 ${line}`} aria-hidden />
     </div>
   );
 }
