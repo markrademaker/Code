@@ -54,18 +54,18 @@ function Month({
   });
 
   return (
-    <div className="rounded-3xl bg-white p-5 shadow-soft ring-1 ring-ink/5">
-      <p className="mb-4 text-center font-display text-lg font-semibold text-ink">
+    <div className="rounded-2xl bg-white p-4 shadow-soft ring-1 ring-ink/5">
+      <p className="mb-3 text-center font-semibold text-ink">
         {format(month, "MMMM yyyy")}
       </p>
-      <div className="grid grid-cols-7 gap-1 text-center text-[11px] uppercase tracking-wider text-ink/45">
+      <div className="grid grid-cols-7 gap-1 text-center text-[10px] text-ink/50">
         {WEEKDAYS.map((d) => (
           <div key={d} className="py-1">
             {d}
           </div>
         ))}
       </div>
-      <div className="mt-1 grid grid-cols-7 gap-1.5">
+      <div className="mt-1 grid grid-cols-7 gap-1">
         {days.map((day) => {
           const inMonth = isSameMonth(day, month);
           const rate = inMonth ? findRate(day, rates) : undefined;
@@ -79,22 +79,22 @@ function Month({
             isAfter(day, selectedStart) &&
             isBefore(day, selectedEnd);
 
-          const baseCls =
-            "aspect-square flex flex-col items-center justify-center rounded-xl transition";
-          const stateCls = !inMonth
-            ? "text-ink/15"
+          const base =
+            "aspect-square flex flex-col items-center justify-center rounded text-[11px] leading-tight";
+          const cls = !inMonth
+            ? `${base} text-ink/20`
             : isStart || isEnd
-              ? "bg-ocean text-whitewash shadow-soft"
+              ? `${base} bg-ocean text-whitewash cursor-pointer transition hover:scale-[1.05] hover:ring-2 hover:ring-ocean/30`
               : inRange
-                ? "bg-ocean/20 text-ocean"
+                ? `${base} bg-ocean/20 text-ocean cursor-pointer transition hover:scale-[1.05] hover:ring-2 hover:ring-ocean/30`
                 : rate
-                  ? "bg-sea/10 text-ocean"
-                  : "bg-sand/40 text-ink/60";
+                  ? `${base} bg-sea/15 text-ocean cursor-pointer transition hover:scale-[1.05] hover:ring-2 hover:ring-ink/20`
+                  : `${base} bg-ink/5 text-ink cursor-pointer transition hover:scale-[1.05] hover:ring-2 hover:ring-ink/20`;
 
           if (!inMonth) {
             return (
-              <div key={day.toISOString()} className={`${baseCls} ${stateCls}`}>
-                <span className="text-sm">{format(day, "d")}</span>
+              <div key={day.toISOString()} className={cls}>
+                <span>{format(day, "d")}</span>
               </div>
             );
           }
@@ -104,11 +104,12 @@ function Month({
               key={day.toISOString()}
               type="button"
               onClick={() => onClick(iso)}
-              className={`${baseCls} ${stateCls} cursor-pointer hover:ring-2 hover:ring-ocean/40`}
+              className={cls}
+              title={rate ? `${formatEuro(rate.nightlyRateCents)} / night` : "No rate"}
             >
-              <span className="text-sm leading-none">{format(day, "d")}</span>
+              <span>{format(day, "d")}</span>
               {rate && (
-                <span className="mt-0.5 text-[9px] font-medium">
+                <span className="hidden truncate px-1 sm:block sm:text-[9px]">
                   {formatEuro(rate.nightlyRateCents)}
                 </span>
               )}
@@ -130,7 +131,7 @@ export function RateCalendar({
     end: string,
     euro: number,
     label?: string,
-  ) => Promise<boolean>;
+  ) => Promise<string | null>;
 }) {
   const [offset, setOffset] = useState(0);
   const [start, setStart] = useState<string | null>(null);
@@ -166,20 +167,20 @@ export function RateCalendar({
       return;
     }
     const amount = Number(euro);
-    if (!amount || amount <= 0) {
+    if (!Number.isFinite(amount) || amount <= 0) {
       setError("Enter a nightly rate in euros.");
       return;
     }
     setSaving(true);
-    const ok = await onSavePeriod(start, end, amount, label.trim() || undefined);
+    const err = await onSavePeriod(start, end, amount, label.trim() || undefined);
     setSaving(false);
-    if (ok) {
+    if (err === null) {
       setStart(null);
       setEnd(null);
       setEuro("");
       setLabel("");
     } else {
-      setError("Could not save. Please try again.");
+      setError(err);
     }
   }
 
@@ -227,15 +228,15 @@ export function RateCalendar({
 
       <p className="mt-3 text-xs text-ink/55">
         <span className="mr-3 inline-flex items-center gap-2">
-          <span className="inline-block h-3 w-3 rounded-md bg-sand/60" />
+          <span className="inline-block h-3 w-3 rounded bg-ink/5" />
           No rate set
         </span>
         <span className="mr-3 inline-flex items-center gap-2">
-          <span className="inline-block h-3 w-3 rounded-md bg-sea/20" />
+          <span className="inline-block h-3 w-3 rounded bg-sea/15" />
           Priced
         </span>
         <span className="inline-flex items-center gap-2">
-          <span className="inline-block h-3 w-3 rounded-md bg-ocean" />
+          <span className="inline-block h-3 w-3 rounded bg-ocean" />
           Your selection
         </span>
       </p>
