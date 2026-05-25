@@ -6,15 +6,18 @@ import { USER_COOKIE_NAME, verifyUserSessionEdge } from "@/lib/user-session-edge
 const PUBLIC_PATHS = new Set<string>([
   "/",
   "/photos",
-  "/weather",
-  "/restaurants",
-  "/house-rules",
   "/login",
   "/booking-action",
 ]);
 
 // Pages that genuinely require a user session.
-const REQUIRES_USER_PREFIXES = ["/my-bookings", "/pay"];
+const REQUIRES_USER_PREFIXES = [
+  "/my-bookings",
+  "/pay",
+  "/weather",
+  "/restaurants",
+  "/house-rules",
+];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
