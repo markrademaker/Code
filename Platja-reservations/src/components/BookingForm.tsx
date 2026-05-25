@@ -30,13 +30,30 @@ export type BookingFormUser = {
 export function BookingForm({
   user,
   frostStrength = 80,
+  checkInValue,
+  checkOutValue,
+  onCheckInChange,
+  onCheckOutChange,
 }: {
   user: BookingFormUser | null;
   frostStrength?: number;
+  checkInValue?: string;
+  checkOutValue?: string;
+  onCheckInChange?: (v: string) => void;
+  onCheckOutChange?: (v: string) => void;
 }) {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
+  const [localCheckIn, setLocalCheckIn] = useState("");
+  const [localCheckOut, setLocalCheckOut] = useState("");
+  const controlled = checkInValue !== undefined && onCheckInChange !== undefined;
+  const checkIn = controlled ? checkInValue ?? "" : localCheckIn;
+  const checkOut = controlled ? checkOutValue ?? "" : localCheckOut;
+  const setCheckIn = controlled
+    ? (v: string) => onCheckInChange?.(v)
+    : setLocalCheckIn;
+  const setCheckOut = controlled
+    ? (v: string) => onCheckOutChange?.(v)
+    : setLocalCheckOut;
   const [quote, setQuote] = useState<QuoteData | null>(null);
   const [quoteLoading, setQuoteLoading] = useState(false);
 

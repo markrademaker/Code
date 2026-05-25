@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { SectionMark } from "@/components/Marks";
+import { SiteShell } from "@/components/SiteShell";
+import { Frost } from "@/components/Frost";
 
 export const metadata: Metadata = {
   title: "Where to eat around Platja d'Aro",
@@ -31,8 +33,11 @@ export default async function RestaurantsPage() {
     .catch(() => []);
 
   return (
-    <main className="mx-auto max-w-7xl px-5 pt-16 pb-20 sm:px-8 sm:pt-24 sm:pb-28">
-      <SectionMark number="VI" label="Where we eat" />
+    <SiteShell>
+      <div className="pt-12 pb-24 sm:pt-16 sm:pb-32">
+        <section className="relative mx-auto max-w-7xl px-5 sm:px-8">
+          <Frost strength={80} className="p-8 sm:p-12 lg:p-16">
+            <SectionMark number="VI" label="Where we eat" />
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-20">
         <h1 className="font-display text-4xl font-light leading-[1.05] tracking-tightish text-ink sm:text-5xl lg:text-7xl">
@@ -106,6 +111,9 @@ export default async function RestaurantsPage() {
         </Link>
         .
       </p>
-    </main>
+          </Frost>
+        </section>
+      </div>
+    </SiteShell>
   );
 }
