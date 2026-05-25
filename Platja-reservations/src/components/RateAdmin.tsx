@@ -68,13 +68,16 @@ export function RateAdmin({ initial }: { initial: RateRow[] }) {
     endDate: string,
     nightlyEuro: number,
     label?: string,
-  ): Promise<boolean> {
+  ): Promise<string | null> {
     const res = await fetch("/api/admin/rates", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ startDate, endDate, nightlyEuro, label }),
     });
-    if (!res.ok) return false;
+    if (!res.ok) {
+      const j = await res.json().catch(() => ({}));
+      return j.error ?? `Could not save (HTTP ${res.status})`;
+    }
     const { id } = await res.json();
     setRows((rs) =>
       [
@@ -88,7 +91,7 @@ export function RateAdmin({ initial }: { initial: RateRow[] }) {
         },
       ].sort((a, b) => a.startDate.localeCompare(b.startDate)),
     );
-    return true;
+    return null;
   }
 
   function startEdit(r: RateRow) {
@@ -104,14 +107,21 @@ export function RateAdmin({ initial }: { initial: RateRow[] }) {
   async function saveEdit(id: string) {
     setBusy(true);
     setError(null);
+    const payload = {
+      startDate: edit.startDate,
+      endDate: edit.endDate,
+      nightlyEuro: Number(edit.nightlyEuro),
+      label: edit.label || null,
+    };
     const res = await fetch(`/api/admin/rates/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(edit),
+      body: JSON.stringify(payload),
     });
     setBusy(false);
     if (!res.ok) {
-      setError("Could not save");
+      const j = await res.json().catch(() => ({}));
+      setError(j.error ?? `Could not save (HTTP ${res.status})`);
       return;
     }
     setRows((rs) =>
@@ -120,10 +130,10 @@ export function RateAdmin({ initial }: { initial: RateRow[] }) {
           r.id === id
             ? {
                 ...r,
-                startDate: edit.startDate,
-                endDate: edit.endDate,
-                nightlyRateCents: Math.round(Number(edit.nightlyEuro) * 100),
-                label: edit.label || null,
+                startDate: payload.startDate,
+                endDate: payload.endDate,
+                nightlyRateCents: Math.round(payload.nightlyEuro * 100),
+                label: payload.label,
               }
             : r,
         )
