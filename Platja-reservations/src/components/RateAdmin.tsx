@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { format, parseISO } from "date-fns";
 import { ChatWidget } from "@/components/ChatWidget";
+import { RateCalendar } from "@/components/RateCalendar";
 import { formatEuro } from "@/lib/pricing";
 
 export type RateRow = {
@@ -60,6 +61,34 @@ export function RateAdmin({ initial }: { initial: RateRow[] }) {
       ].sort((a, b) => a.startDate.localeCompare(b.startDate)),
     );
     setDraft(EMPTY);
+  }
+
+  async function saveFromCalendar(
+    startDate: string,
+    endDate: string,
+    nightlyEuro: number,
+    label?: string,
+  ): Promise<boolean> {
+    const res = await fetch("/api/admin/rates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ startDate, endDate, nightlyEuro, label }),
+    });
+    if (!res.ok) return false;
+    const { id } = await res.json();
+    setRows((rs) =>
+      [
+        ...rs,
+        {
+          id,
+          startDate,
+          endDate,
+          nightlyRateCents: Math.round(nightlyEuro * 100),
+          label: label ?? null,
+        },
+      ].sort((a, b) => a.startDate.localeCompare(b.startDate)),
+    );
+    return true;
   }
 
   function startEdit(r: RateRow) {
@@ -122,11 +151,14 @@ export function RateAdmin({ initial }: { initial: RateRow[] }) {
         ← Back to bookings
       </Link>
 
+      <div className="mt-8">
+        <RateCalendar rates={rows} onSavePeriod={saveFromCalendar} />
+      </div>
+
       <section className="mt-8 rounded-3xl bg-white p-6 shadow-soft ring-1 ring-ink/5 sm:p-7">
-        <h2 className="font-display text-xl font-semibold">Add a period</h2>
+        <h2 className="font-display text-xl font-semibold">Add a period (form)</h2>
         <p className="mt-1 text-sm text-ink/65">
-          Every night between the start and end (inclusive) is priced at the
-          rate below.
+          Same as the calendar above — typing in dates and a rate also works.
         </p>
         <form onSubmit={create} className="mt-4 grid gap-3 sm:grid-cols-4">
           <Date label="Start" value={draft.startDate} onChange={(v) => setDraft({ ...draft, startDate: v })} required />
