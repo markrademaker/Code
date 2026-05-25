@@ -39,7 +39,15 @@ export default function LoginPage({
     setError(null);
 
     const formData = new FormData(form);
-    const payload = Object.fromEntries(formData.entries());
+    const payload: Record<string, unknown> = Object.fromEntries(formData.entries());
+    if (mode === "signup") {
+      if (!inviteCode.trim()) {
+        setSubmitting(false);
+        setError("Activation code is required for new accounts.");
+        return;
+      }
+      payload.inviteCode = inviteCode.trim();
+    }
     const endpoint = mode === "signup" ? "/api/auth/signup" : "/api/auth/login";
 
     try {
@@ -114,17 +122,43 @@ export default function LoginPage({
           </h1>
           <p className="mt-3 text-sm text-ink/70 sm:text-base">
             {isSignup
-              ? "Save your details so booking takes seconds next time."
+              ? "Save your details so booking takes seconds next time. Activation code required."
               : "Sign in to request a booking with your saved details."}
           </p>
 
-          <a
-            href={googleHref()}
-            className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl border border-ink/15 bg-white px-5 py-3 text-sm font-medium text-ink shadow-soft transition hover:bg-whitewash"
-          >
-            <GoogleIcon />
-            {isSignup ? "Sign up with Google" : "Continue with Google"}
-          </a>
+          {isSignup && (
+            <label className="mt-6 block">
+              <span className="text-sm font-medium text-ink">
+                Activation code
+              </span>
+              <input
+                name="inviteCode"
+                autoComplete="off"
+                value={inviteCode}
+                onChange={(e) => setInviteCode(e.target.value)}
+                placeholder="Required for new accounts"
+                className="mt-1 w-full rounded-2xl border border-ink/15 bg-white/90 px-4 py-3 text-ink shadow-soft focus:border-sea focus:outline-none focus:ring-2 focus:ring-sea/40"
+              />
+              <span className="mt-1.5 block text-xs text-ink/55">
+                Ask the owners if you don&apos;t have one yet.
+              </span>
+            </label>
+          )}
+
+          {isSignup && !inviteCode.trim() ? (
+            <div className="mt-5 flex w-full cursor-not-allowed items-center justify-center gap-3 rounded-2xl border border-ink/10 bg-white/50 px-5 py-3 text-sm font-medium text-ink/40">
+              <GoogleIcon />
+              Sign up with Google
+            </div>
+          ) : (
+            <a
+              href={googleHref()}
+              className="mt-5 flex w-full items-center justify-center gap-3 rounded-2xl border border-ink/15 bg-white px-5 py-3 text-sm font-medium text-ink shadow-soft transition hover:bg-whitewash"
+            >
+              <GoogleIcon />
+              {isSignup ? "Sign up with Google" : "Continue with Google"}
+            </a>
+          )}
           <div className="my-5 flex items-center gap-3 text-xs uppercase tracking-wider text-ink/45">
             <span className="h-px flex-1 bg-ink/15" />
             or
@@ -152,19 +186,6 @@ export default function LoginPage({
               autoComplete={isSignup ? "new-password" : "current-password"}
               minLength={isSignup ? 8 : undefined}
             />
-            {isSignup && (
-              <label className="block">
-                <span className="text-sm font-medium text-ink">Activation code</span>
-                <input
-                  name="inviteCode"
-                  required
-                  autoComplete="off"
-                  value={inviteCode}
-                  onChange={(e) => setInviteCode(e.target.value)}
-                  className="mt-1 w-full rounded-2xl border border-ink/15 bg-white/90 px-4 py-3 text-ink shadow-soft focus:border-sea focus:outline-none focus:ring-2 focus:ring-sea/40"
-                />
-              </label>
-            )}
             {error && (
               <p className="rounded-xl bg-terracotta/20 px-4 py-3 text-sm text-terracotta">
                 {error}
