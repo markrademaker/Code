@@ -145,16 +145,42 @@ export async function fetchToday(): Promise<Today | null> {
   }
 }
 
-export function describeWeatherCode(code: number): { label: string; icon: string } {
-  if (code === 0) return { label: "Clear", icon: "☀️" };
-  if (code <= 2) return { label: "Mostly sunny", icon: "🌤️" };
-  if (code === 3) return { label: "Overcast", icon: "☁️" };
-  if (code === 45 || code === 48) return { label: "Fog", icon: "🌫️" };
-  if (code >= 51 && code <= 57) return { label: "Drizzle", icon: "🌦️" };
-  if (code >= 61 && code <= 67) return { label: "Rain", icon: "🌧️" };
-  if (code >= 71 && code <= 77) return { label: "Snow", icon: "🌨️" };
-  if (code >= 80 && code <= 82) return { label: "Showers", icon: "🌦️" };
-  if (code >= 85 && code <= 86) return { label: "Snow showers", icon: "🌨️" };
-  if (code >= 95) return { label: "Thunderstorm", icon: "⛈️" };
-  return { label: "—", icon: "🌡️" };
+export type WeatherCondition = {
+  label: string;
+  photo: string;
+};
+
+// Unsplash photos, picked to evoke each condition. Swap for your own
+// shots of the villa in different weather any time.
+const PHOTOS = {
+  clear:
+    "https://images.unsplash.com/photo-1601297183305-6df142704ea2?w=1600&q=80&auto=format&fit=crop",
+  partlyCloudy:
+    "https://images.unsplash.com/photo-1505533321630-975218a5f66f?w=1600&q=80&auto=format&fit=crop",
+  overcast:
+    "https://images.unsplash.com/photo-1499346030926-9a72daac6c63?w=1600&q=80&auto=format&fit=crop",
+  fog:
+    "https://images.unsplash.com/photo-1487621167305-5d248087c724?w=1600&q=80&auto=format&fit=crop",
+  drizzle:
+    "https://images.unsplash.com/photo-1438449805896-28a666819a20?w=1600&q=80&auto=format&fit=crop",
+  rain:
+    "https://images.unsplash.com/photo-1519692933481-e162a57d6721?w=1600&q=80&auto=format&fit=crop",
+  storm:
+    "https://images.unsplash.com/photo-1429552077091-836152271555?w=1600&q=80&auto=format&fit=crop",
+  snow:
+    "https://images.unsplash.com/photo-1483921020237-2ff51e8e4b22?w=1600&q=80&auto=format&fit=crop",
+};
+
+export function describeWeatherCode(code: number): WeatherCondition {
+  if (code === 0) return { label: "Clear", photo: PHOTOS.clear };
+  if (code <= 2) return { label: "Mostly sunny", photo: PHOTOS.partlyCloudy };
+  if (code === 3) return { label: "Overcast", photo: PHOTOS.overcast };
+  if (code === 45 || code === 48) return { label: "Fog", photo: PHOTOS.fog };
+  if (code >= 51 && code <= 57) return { label: "Drizzle", photo: PHOTOS.drizzle };
+  if (code >= 61 && code <= 67) return { label: "Rain", photo: PHOTOS.rain };
+  if (code >= 71 && code <= 77) return { label: "Snow", photo: PHOTOS.snow };
+  if (code >= 80 && code <= 82) return { label: "Showers", photo: PHOTOS.rain };
+  if (code >= 85 && code <= 86) return { label: "Snow showers", photo: PHOTOS.snow };
+  if (code >= 95) return { label: "Thunderstorm", photo: PHOTOS.storm };
+  return { label: "—", photo: PHOTOS.clear };
 }

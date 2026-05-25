@@ -18,6 +18,9 @@ export const revalidate = 1800;
 export default async function WeatherPage() {
   const forecast = await fetchForecast();
   const currentMonthIndex = new Date().getMonth();
+  const current = forecast
+    ? describeWeatherCode(forecast.current.weatherCode)
+    : null;
 
   return (
     <SiteShell slideshowCount={2}>
@@ -38,115 +41,181 @@ export default async function WeatherPage() {
               </p>
             </div>
 
-      <section className="mt-16">
-        <h2 className="font-display text-2xl font-semibold sm:text-3xl">
-          Next 7 days
-        </h2>
-        {forecast ? (
-          <>
-            <div className="mt-4 rounded-2xl bg-gradient-to-br from-sea to-deep p-6 text-white shadow-sm">
-              <p className="text-sm uppercase tracking-wider text-white/80">
-                Right now
-              </p>
-              <div className="mt-2 flex items-center gap-4">
-                <span className="text-5xl">
-                  {describeWeatherCode(forecast.current.weatherCode).icon}
-                </span>
-                <div>
-                  <p className="text-4xl font-semibold">
-                    {Math.round(forecast.current.temperatureC)}°C
-                  </p>
-                  <p className="text-white/80">
-                    {describeWeatherCode(forecast.current.weatherCode).label}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {forecast.daily.map((d) => {
-                const { label, icon } = describeWeatherCode(d.weatherCode);
-                return (
-                  <li
-                    key={d.date}
-                    className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-deep/5"
-                  >
-                    <p className="text-sm font-medium text-deep/70">
-                      {format(parseISO(d.date), "EEE d MMM")}
-                    </p>
-                    <div className="mt-2 flex items-center justify-between">
-                      <span className="text-3xl">{icon}</span>
-                      <p className="text-right">
-                        <span className="text-lg font-semibold">
-                          {Math.round(d.highC)}°
-                        </span>
-                        <span className="ml-1 text-deep/50">
-                          / {Math.round(d.lowC)}°
-                        </span>
+            {forecast && current ? (
+              <>
+                {/* Hero "right now" card with the condition photo behind */}
+                <div className="relative mt-14 overflow-hidden rounded-3xl shadow-soft ring-1 ring-ink/5">
+                  <div
+                    aria-hidden
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${current.photo})` }}
+                  />
+                  <div
+                    aria-hidden
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        "linear-gradient(110deg, rgba(20,16,12,0.55) 0%, rgba(20,16,12,0.35) 55%, rgba(20,16,12,0.2) 100%)",
+                    }}
+                  />
+                  <div className="relative grid gap-6 p-8 text-whitewash sm:grid-cols-[1.4fr_1fr] sm:p-12 lg:p-16">
+                    <div>
+                      <p className="text-[11px] uppercase tracking-[0.32em] text-whitewash/80">
+                        Right now · Platja d&apos;Aro
+                      </p>
+                      <p
+                        className="mt-6 font-display text-7xl font-light leading-none tracking-tightish sm:text-8xl lg:text-[9rem]"
+                        style={{ textShadow: "0 2px 24px rgba(0,0,0,0.35)" }}
+                      >
+                        {Math.round(forecast.current.temperatureC)}°
+                      </p>
+                      <p className="mt-3 font-display text-2xl font-light italic text-whitewash/90 sm:text-3xl">
+                        {current.label}
                       </p>
                     </div>
-                    <p className="mt-2 text-xs text-deep/60">
-                      {label} · {d.precipitationMm.toFixed(1)} mm rain
-                    </p>
-                  </li>
-                );
-              })}
-            </ul>
-            <p className="mt-3 text-xs text-deep/50">
-              Forecast from Open-Meteo, updated every 30 minutes.
-            </p>
-          </>
-        ) : (
-          <p className="mt-4 rounded-2xl bg-white p-6 text-deep/70 shadow-sm ring-1 ring-deep/5">
-            Forecast unavailable right now. Try again in a bit.
-          </p>
-        )}
-      </section>
+                    <dl className="grid grid-cols-2 content-end gap-y-4 self-end text-sm">
+                      <Stat
+                        label="Today's high"
+                        value={`${Math.round(forecast.daily[0]?.highC ?? forecast.current.temperatureC)}°`}
+                      />
+                      <Stat
+                        label="Today's low"
+                        value={`${Math.round(forecast.daily[0]?.lowC ?? forecast.current.temperatureC)}°`}
+                      />
+                      <Stat
+                        label="Rain"
+                        value={`${(forecast.daily[0]?.precipitationMm ?? 0).toFixed(1)} mm`}
+                      />
+                      <Stat label="Updated" value="every 30 min" />
+                    </dl>
+                  </div>
+                </div>
 
-      <section className="mt-20">
-        <h2 className="font-display text-2xl font-semibold sm:text-3xl">
-          Typical weather by month
-        </h2>
-        <p className="mt-2 max-w-2xl text-sm text-deep/70 sm:text-base">
-          Long-term averages for the Costa Brava — useful for picking when to
-          visit.
-        </p>
-        <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {PLATJA_CLIMATE.map((m, i) => {
-            const isCurrent = i === currentMonthIndex;
-            return (
-              <li
-                key={m.month}
-                className={`rounded-2xl p-5 shadow-sm ring-1 ${
-                  isCurrent
-                    ? "bg-sea/15 ring-sea/30"
-                    : "bg-white ring-deep/5"
-                }`}
-              >
-                <div className="flex items-baseline justify-between">
-                  <p className="font-display text-lg font-semibold">{m.month}</p>
-                  {isCurrent && (
-                    <span className="rounded-full bg-sea px-2 py-0.5 text-xs font-medium text-white">
-                      Now
-                    </span>
-                  )}
-                </div>
-                <div className="mt-2 flex gap-4 text-sm text-deep/80">
-                  <span>
-                    <strong className="text-deep">{m.highC}°</strong> / {m.lowC}°
-                  </span>
-                  <span>Sea {m.seaC}°</span>
-                  <span>{m.rainMm} mm</span>
-                </div>
-                <p className="mt-2 text-sm text-deep/70">{m.blurb}</p>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
+                {/* 7-day strip, each day shows the condition photo behind text */}
+                <h2 className="mt-14 font-display text-2xl font-light tracking-tightish sm:text-3xl">
+                  Next seven days
+                </h2>
+                <ul className="mt-5 grid gap-3 sm:grid-cols-4 lg:grid-cols-7">
+                  {forecast.daily.map((d, i) => {
+                    const { label, photo } = describeWeatherCode(d.weatherCode);
+                    return (
+                      <li
+                        key={d.date}
+                        className="relative aspect-[3/4] overflow-hidden rounded-2xl shadow-soft ring-1 ring-ink/5"
+                      >
+                        <div
+                          aria-hidden
+                          className="absolute inset-0 bg-cover bg-center"
+                          style={{ backgroundImage: `url(${photo})` }}
+                        />
+                        <div
+                          aria-hidden
+                          className="absolute inset-0"
+                          style={{
+                            background:
+                              "linear-gradient(180deg, rgba(20,16,12,0.15) 0%, rgba(20,16,12,0.65) 100%)",
+                          }}
+                        />
+                        <div className="relative flex h-full flex-col p-4 text-whitewash">
+                          <p className="text-[10px] uppercase tracking-[0.25em] text-whitewash/80">
+                            {i === 0 ? "Today" : format(parseISO(d.date), "EEE")}
+                          </p>
+                          <p className="mt-1 text-xs text-whitewash/70">
+                            {format(parseISO(d.date), "d MMM")}
+                          </p>
+                          <div className="mt-auto">
+                            <p className="font-display text-3xl font-light leading-none">
+                              {Math.round(d.highC)}°
+                            </p>
+                            <p className="text-xs text-whitewash/75">
+                              / {Math.round(d.lowC)}°
+                            </p>
+                            <p className="mt-2 font-display text-sm italic text-whitewash/90">
+                              {label}
+                            </p>
+                            {d.precipitationMm > 0.2 && (
+                              <p className="text-[11px] text-whitewash/75">
+                                {d.precipitationMm.toFixed(1)} mm rain
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <p className="mt-3 text-xs text-ink/55">
+                  Forecast from Open-Meteo, updated every 30 minutes.
+                </p>
+              </>
+            ) : (
+              <p className="mt-14 rounded-3xl bg-white p-8 text-ink/70 shadow-soft ring-1 ring-ink/5">
+                Forecast unavailable right now. Try again in a bit.
+              </p>
+            )}
+
+            <section className="mt-20">
+              <h2 className="font-display text-2xl font-light tracking-tightish sm:text-3xl">
+                Typical weather by month
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm text-ink/70 sm:text-base">
+                Long-term averages for the Costa Brava — useful for picking
+                when to visit.
+              </p>
+              <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {PLATJA_CLIMATE.map((m, i) => {
+                  const isCurrent = i === currentMonthIndex;
+                  return (
+                    <li
+                      key={m.month}
+                      className={`rounded-2xl p-5 shadow-soft ring-1 ${
+                        isCurrent
+                          ? "bg-sea/15 ring-sea/30"
+                          : "bg-white ring-ink/5"
+                      }`}
+                    >
+                      <div className="flex items-baseline justify-between">
+                        <p className="font-display text-lg font-light">
+                          {m.month}
+                        </p>
+                        {isCurrent && (
+                          <span className="rounded-full bg-ocean px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-whitewash">
+                            Now
+                          </span>
+                        )}
+                      </div>
+                      <div className="mt-2 flex gap-4 text-sm text-ink/80">
+                        <span>
+                          <strong className="font-medium text-ink">
+                            {m.highC}°
+                          </strong>{" "}
+                          / {m.lowC}°
+                        </span>
+                        <span>Sea {m.seaC}°</span>
+                        <span>{m.rainMm} mm</span>
+                      </div>
+                      <p className="mt-2 text-sm text-ink/70">{m.blurb}</p>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
           </Frost>
         </section>
       </div>
     </SiteShell>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-[10px] uppercase tracking-[0.22em] text-whitewash/65">
+        {label}
+      </dt>
+      <dd className="mt-1 font-display text-2xl font-light text-whitewash">
+        {value}
+      </dd>
+    </div>
   );
 }
