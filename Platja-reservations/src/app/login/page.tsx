@@ -77,30 +77,42 @@ export default function LoginPage({
         className="absolute inset-0 -z-20 bg-cover bg-center"
         style={{
           backgroundImage:
-            "linear-gradient(180deg, rgba(250,246,236,0.10) 0%, rgba(61,47,36,0.30) 100%), url('/login-bg.jpg')",
+            "linear-gradient(180deg, rgba(20,16,12,0.25) 0%, rgba(20,16,12,0.55) 100%), url('https://images.unsplash.com/photo-1582719508461-905c673771fd?w=2400&q=80&auto=format&fit=crop')",
         }}
       />
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-30 bg-gradient-to-br from-sand via-sunset/40 to-ocean/60"
-      />
+
+      <Link
+        href="/"
+        className="absolute left-5 top-5 z-10 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-[11px] uppercase tracking-[0.22em] text-whitewash backdrop-blur-md transition hover:bg-white/25 sm:left-8 sm:top-6"
+      >
+        <span aria-hidden>←</span>
+        <span className="font-display text-sm font-medium italic normal-case tracking-normal">
+          Villa Mas Nou
+        </span>
+      </Link>
 
       <div className="relative flex min-h-[100dvh] items-center justify-center px-5 py-10 sm:px-6">
-        <div className="w-full max-w-md rounded-3xl bg-white/75 p-7 shadow-glow ring-1 ring-white/40 backdrop-blur-xl sm:p-9">
-          <Link
-            href="/"
-            className="inline-block font-display text-lg font-semibold text-ink"
-          >
-            Villa Mas Nou
-          </Link>
-          <p className="mt-1 text-xs uppercase tracking-[0.2em] text-ink/55">
+        <div className="w-full max-w-md rounded-3xl bg-white/85 p-7 shadow-glow ring-1 ring-white/40 backdrop-blur-xl sm:p-9">
+          <p className="text-xs uppercase tracking-[0.2em] text-ink/55">
             Platja d&apos;Aro · Costa Brava
           </p>
 
-          <h1 className="mt-6 font-display text-3xl font-semibold text-ink sm:text-4xl">
-            {isSignup ? "Create your account" : "Welcome back"}
+          <h1 className="mt-4 font-display text-3xl font-light leading-tight tracking-tightish text-ink sm:text-4xl">
+            {isSignup ? (
+              <>
+                Create your
+                <br />
+                <span className="italic text-terracotta">account</span>.
+              </>
+            ) : (
+              <>
+                Welcome
+                <br />
+                <span className="italic text-terracotta">back</span>.
+              </>
+            )}
           </h1>
-          <p className="mt-2 text-sm text-ink/70 sm:text-base">
+          <p className="mt-3 text-sm text-ink/70 sm:text-base">
             {isSignup
               ? "Save your details so booking takes seconds next time."
               : "Sign in to request a booking with your saved details."}
