@@ -39,7 +39,7 @@ export function Hero() {
               Request dates
             </Link>
             <Link
-              href="#villa"
+              href="/photos"
               className="rounded-full border border-whitewash/50 px-7 py-3.5 text-xs font-medium uppercase tracking-wider text-whitewash hover:bg-whitewash/10"
             >
               Tour the villa
