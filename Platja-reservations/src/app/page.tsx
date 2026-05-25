@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { VillaSlideshow } from "@/components/VillaSlideshow";
+import { SiteShell } from "@/components/SiteShell";
 import { Hero } from "@/components/Hero";
 import { PullQuote } from "@/components/PullQuote";
 import { VillaOverview } from "@/components/VillaOverview";
 import { Nearby } from "@/components/Nearby";
-import { AvailabilityCalendar } from "@/components/AvailabilityCalendar";
-import { BookingForm } from "@/components/BookingForm";
+import { BookingFlow } from "@/components/BookingFlow";
 import { Divider } from "@/components/Marks";
 import { getBlockingBookings } from "@/lib/bookings";
 import { getCurrentUser } from "@/lib/user";
@@ -64,41 +63,16 @@ export default async function HomePage() {
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(lodgingJsonLd) }}
       />
-      <VillaSlideshow mode="kenburns" darkOverlay={28} />
-
-      <div className="relative" style={{ zIndex: 1 }}>
-        <main className="relative">
-          <Hero />
-
-          <div className="space-y-24 pb-24 sm:space-y-32">
-            <VillaOverview frostStrength={FROST} />
-            <Divider light />
-            <PullQuote />
-            <AvailabilityCalendar bookings={bookings} frostStrength={FROST} />
-            <BookingForm user={user} frostStrength={FROST} />
-            <Nearby frostStrength={FROST} />
-          </div>
-
-          <footer
-            className="relative mt-32 border-t border-whitewash/25 py-16 text-center"
-            style={{
-              background: "rgba(28,22,16,0.55)",
-              backdropFilter: "blur(14px) saturate(150%)",
-              WebkitBackdropFilter: "blur(14px) saturate(150%)",
-            }}
-          >
-            <p className="font-display text-3xl italic text-whitewash">
-              Villa Mas Nou
-            </p>
-            <p className="mt-2 text-[11px] uppercase tracking-[0.3em] text-whitewash/70">
-              Platja d&apos;Aro · Costa Brava
-            </p>
-            <p className="mt-6 text-xs text-whitewash/55">
-              © {new Date().getFullYear()}
-            </p>
-          </footer>
-        </main>
-      </div>
+      <SiteShell>
+        <Hero />
+        <div className="space-y-24 pb-24 sm:space-y-32">
+          <VillaOverview frostStrength={FROST} />
+          <Divider light />
+          <PullQuote />
+          <BookingFlow bookings={bookings} user={user} frostStrength={FROST} />
+          <Nearby frostStrength={FROST} />
+        </div>
+      </SiteShell>
     </>
   );
 }

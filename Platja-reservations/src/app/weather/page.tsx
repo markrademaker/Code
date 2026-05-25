@@ -3,6 +3,8 @@ import { format, parseISO } from "date-fns";
 import { fetchForecast, describeWeatherCode } from "@/lib/weather";
 import { PLATJA_CLIMATE } from "@/lib/climate";
 import { SectionMark } from "@/components/Marks";
+import { SiteShell } from "@/components/SiteShell";
+import { Frost } from "@/components/Frost";
 
 export const metadata: Metadata = {
   title: "Weather in Platja d'Aro",
@@ -18,20 +20,23 @@ export default async function WeatherPage() {
   const currentMonthIndex = new Date().getMonth();
 
   return (
-    <main className="mx-auto max-w-7xl px-5 pt-16 pb-20 sm:px-8 sm:pt-24 sm:pb-28">
-      <SectionMark number="V" label="Costa Brava forecast" />
+    <SiteShell>
+      <div className="pt-12 pb-24 sm:pt-16 sm:pb-32">
+        <section className="relative mx-auto max-w-7xl px-5 sm:px-8">
+          <Frost strength={80} className="p-8 sm:p-12 lg:p-16">
+            <SectionMark number="V" label="Costa Brava forecast" />
 
-      <div className="mt-10 grid gap-10 lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-20">
-        <h1 className="font-display text-4xl font-light leading-[1.05] tracking-tightish text-ink sm:text-5xl lg:text-7xl">
-          Sun, <span className="italic text-terracotta">sea</span>,
-          <br />
-          and the in-between.
-        </h1>
-        <p className="text-base leading-relaxed text-ink/75 sm:text-lg lg:pb-3">
-          A live seven-day forecast for the villa, plus the typical climate
-          for each month so you can plan your stay.
-        </p>
-      </div>
+            <div className="mt-10 grid gap-10 lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-20">
+              <h1 className="font-display text-4xl font-light leading-[1.05] tracking-tightish text-ink sm:text-5xl lg:text-7xl">
+                Sun, <span className="italic text-terracotta">sea</span>,
+                <br />
+                and the in-between.
+              </h1>
+              <p className="text-base leading-relaxed text-ink/75 sm:text-lg lg:pb-3">
+                A live seven-day forecast for the villa, plus the typical
+                climate for each month so you can plan your stay.
+              </p>
+            </div>
 
       <section className="mt-16">
         <h2 className="font-display text-2xl font-semibold sm:text-3xl">
@@ -139,6 +144,9 @@ export default async function WeatherPage() {
           })}
         </ul>
       </section>
-    </main>
+          </Frost>
+        </section>
+      </div>
+    </SiteShell>
   );
 }
