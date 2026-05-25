@@ -23,6 +23,17 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   if (pathname.startsWith("/admin")) {
+    // Admin requires two things: a signed-in user account first,
+    // then a separate admin password. Stops anyone from typing
+    // /admin and going straight to the password prompt.
+    const adminUserCookie = req.cookies.get(USER_COOKIE_NAME)?.value;
+    const adminUserId = await verifyUserSessionEdge(adminUserCookie);
+    if (!adminUserId) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/login";
+      url.searchParams.set("next", pathname);
+      return NextResponse.redirect(url);
+    }
     if (pathname === "/admin/login") return NextResponse.next();
     const cookie = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
     if (await verifySessionCookie(cookie)) return NextResponse.next();
