@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
+import { cookies } from "next/headers";
 import "./globals.css";
 import { NavBar } from "@/components/NavBar";
 import { ChatWidget } from "@/components/ChatWidget";
 import { getCurrentUser } from "@/lib/user";
+import { ADMIN_COOKIE_NAME, verifySessionCookie } from "@/lib/admin-auth";
 
 const display = Cormorant_Garamond({
   subsets: ["latin"],
@@ -88,12 +90,15 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
+  const [user, isAdmin] = await Promise.all([
+    getCurrentUser(),
+    verifySessionCookie(cookies().get(ADMIN_COOKIE_NAME)?.value),
+  ]);
   const navUser = user ? { name: user.name } : null;
   return (
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <body>
-        <NavBar user={navUser} />
+        <NavBar user={navUser} isAdmin={isAdmin} />
         {children}
         {user && <ChatWidget mode="guest" />}
       </body>
