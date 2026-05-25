@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { ADMIN_COOKIE_NAME, verifySessionCookie } from "@/lib/admin-auth";
+import { requireAdminApi } from "@/lib/api-admin";
 
 export const runtime = "nodejs";
 
@@ -12,8 +11,8 @@ const schema = z.object({
 });
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
-  const ok = await verifySessionCookie(cookies().get(ADMIN_COOKIE_NAME)?.value);
-  if (!ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireAdminApi();
+  if (!auth.ok) return auth.response;
 
   const body = await req.json().catch(() => null);
   const parsed = schema.safeParse(body);

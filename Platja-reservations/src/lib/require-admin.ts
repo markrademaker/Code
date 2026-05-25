@@ -1,22 +1,19 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { ADMIN_COOKIE_NAME, verifySessionCookie } from "@/lib/admin-auth";
 import { getCurrentUser } from "@/lib/user";
 
 /**
- * Server-side guard for /admin/* pages. Admin access is two-factor:
- * the visitor must be signed in to a regular user account *and*
- * have a valid admin session. If either is missing they're bounced
- * — to /login first, then /admin/login.
+ * Server-side guard for /admin/* pages. The visitor must be signed
+ * in to a regular user account *and* that user's email must be on
+ * the admin allow-list (src/lib/admin-rbac.ts). If they're not
+ * signed in we redirect to /login with ?next= back. If they're
+ * signed in but not an admin we bounce them home.
  */
 export async function requireAdmin(currentPath = "/admin"): Promise<void> {
   const user = await getCurrentUser();
   if (!user) {
     redirect(`/login?next=${encodeURIComponent(currentPath)}`);
   }
-  const cookie = cookies().get(ADMIN_COOKIE_NAME)?.value;
-  const ok = await verifySessionCookie(cookie);
-  if (!ok) {
-    redirect(`/admin/login?next=${encodeURIComponent(currentPath)}`);
+  if (!user.isAdmin) {
+    redirect("/");
   }
 }
