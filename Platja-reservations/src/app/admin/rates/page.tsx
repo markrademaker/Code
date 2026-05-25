@@ -1,9 +1,11 @@
 import { prisma } from "@/lib/db";
 import { RateAdmin } from "@/components/RateAdmin";
+import { requireAdmin } from "@/lib/require-admin";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminRatesPage() {
+  await requireAdmin("/admin/rates");
   const rates = await prisma.ratePeriod
     .findMany({ orderBy: { startDate: "asc" } })
     .catch(() => []);

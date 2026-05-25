@@ -1,9 +1,11 @@
 import { getAllBookings } from "@/lib/bookings";
 import { AdminDashboard } from "@/components/AdminDashboard";
+import { requireAdmin } from "@/lib/require-admin";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
+  await requireAdmin("/admin");
   const bookings = await getAllBookings().catch(() => []);
   const serialized = bookings.map((b) => ({
     id: b.id,
