@@ -62,7 +62,7 @@ const RULES: { title: string; items: string[] }[] = [
 
 export default function HouseRulesPage() {
   return (
-    <SiteShell>
+    <SiteShell slideshowCount={2}>
       <div className="pt-12 pb-24 sm:pt-16 sm:pb-32">
         <section className="relative mx-auto max-w-7xl px-5 sm:px-8">
           <Frost strength={80} className="p-8 sm:p-12 lg:p-16">
@@ -80,7 +80,7 @@ export default function HouseRulesPage() {
         </p>
       </div>
 
-      <div className="mt-14 grid gap-4 lg:max-w-3xl">
+      <div className="mt-14 grid gap-4 sm:grid-cols-2">
         {RULES.map((s) => (
           <section
             key={s.title}

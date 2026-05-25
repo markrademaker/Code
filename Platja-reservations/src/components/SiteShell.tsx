@@ -1,18 +1,34 @@
 import type { ReactNode } from "react";
-import { VillaSlideshow } from "@/components/VillaSlideshow";
+import {
+  DEFAULT_VILLA_IMAGES,
+  VillaSlideshow,
+  type SlideshowImage,
+} from "@/components/VillaSlideshow";
 
 export function SiteShell({
   children,
   slideshow = true,
+  slideshowImages,
+  slideshowCount,
   showFooter = true,
 }: {
   children: ReactNode;
   slideshow?: boolean;
+  slideshowImages?: SlideshowImage[];
+  slideshowCount?: number;
   showFooter?: boolean;
 }) {
+  const images =
+    slideshowImages ??
+    DEFAULT_VILLA_IMAGES.slice(
+      0,
+      Math.max(2, Math.min(DEFAULT_VILLA_IMAGES.length, slideshowCount ?? DEFAULT_VILLA_IMAGES.length)),
+    );
   return (
     <>
-      {slideshow && <VillaSlideshow mode="kenburns" darkOverlay={32} />}
+      {slideshow && (
+        <VillaSlideshow mode="kenburns" darkOverlay={32} images={images} />
+      )}
       <div className="relative" style={{ zIndex: 1 }}>
         <main className="relative">
           {children}
