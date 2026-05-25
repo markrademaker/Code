@@ -21,7 +21,14 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   if (!(await requireAuth())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body = await req.json().catch(() => null);
   const parsed = schema.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+  if (!parsed.success) {
+    const issues = parsed.error.flatten();
+    const firstField = Object.entries(issues.fieldErrors)[0];
+    const detail = firstField
+      ? `${firstField[0]}: ${firstField[1]?.[0] ?? "invalid"}`
+      : (issues.formErrors[0] ?? "invalid");
+    return NextResponse.json({ error: `Invalid input — ${detail}`, issues }, { status: 400 });
+  }
 
   const data: Record<string, unknown> = {};
   if (parsed.data.startDate) data.startDate = new Date(parsed.data.startDate);
@@ -32,8 +39,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   try {
     await prisma.ratePeriod.update({ where: { id: params.id }, data });
-  } catch {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  } catch (err) {
+    console.error("rate update failed", err);
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return NextResponse.json({ error: `Could not save — ${message}` }, { status: 500 });
   }
   return NextResponse.json({ ok: true });
 }
