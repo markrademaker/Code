@@ -15,7 +15,13 @@ const LINKS = [
 
 export type NavUser = { name: string } | null;
 
-export function NavBar({ user }: { user: NavUser }) {
+export function NavBar({
+  user,
+  isAdmin = false,
+}: {
+  user: NavUser;
+  isAdmin?: boolean;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -94,13 +100,15 @@ export function NavBar({ user }: { user: NavUser }) {
           >
             Reserve
           </Link>
-          <Link
-            href="/admin"
-            className="text-[10px] uppercase tracking-[0.2em] text-ink/40 hover:text-ink/70"
-            title="Admin sign in"
-          >
-            Admin
-          </Link>
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="text-[10px] uppercase tracking-[0.2em] text-ink/40 hover:text-ink/70"
+              title="Admin dashboard"
+            >
+              Admin
+            </Link>
+          )}
         </div>
 
         <button
@@ -179,13 +187,15 @@ export function NavBar({ user }: { user: NavUser }) {
                   Sign in / Create account
                 </Link>
               )}
-              <Link
-                href="/admin"
-                onClick={() => setOpen(false)}
-                className="block rounded-xl px-4 py-3 text-xs font-medium text-ink/50 hover:bg-ink/5"
-              >
-                Admin sign in
-              </Link>
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  onClick={() => setOpen(false)}
+                  className="block rounded-xl px-4 py-3 text-xs font-medium text-ink/50 hover:bg-ink/5"
+                >
+                  Admin dashboard
+                </Link>
+              )}
             </li>
           </ul>
         </nav>
