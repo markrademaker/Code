@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { prisma } from "@/lib/db";
-import { ADMIN_COOKIE_NAME, verifySessionCookie } from "@/lib/admin-auth";
+import { requireAdminApi } from "@/lib/api-admin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const ok = await verifySessionCookie(cookies().get(ADMIN_COOKIE_NAME)?.value);
-  if (!ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireAdminApi();
+  if (!auth.ok) return auth.response;
 
   const bookings = await prisma.booking.findMany({
     orderBy: { updatedAt: "desc" },

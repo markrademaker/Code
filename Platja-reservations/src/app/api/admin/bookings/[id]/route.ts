@@ -4,8 +4,7 @@ import { prisma } from "@/lib/db";
 import { isRangeAvailable } from "@/lib/bookings";
 import { sendGuestStatusUpdate } from "@/lib/email";
 import type { BookingStatus } from "@prisma/client";
-import { ADMIN_COOKIE_NAME, verifySessionCookie } from "@/lib/admin-auth";
-import { cookies } from "next/headers";
+import { requireAdminApi } from "@/lib/api-admin";
 
 export const runtime = "nodejs";
 
@@ -26,13 +25,9 @@ const patchSchema = z.object({
   notifyGuest: z.boolean().optional(),
 });
 
-async function requireAuth(): Promise<boolean> {
-  const cookie = cookies().get(ADMIN_COOKIE_NAME)?.value;
-  return verifySessionCookie(cookie);
-}
-
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
-  if (!(await requireAuth())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireAdminApi();
+  if (!auth.ok) return auth.response;
 
   const body = await req.json().catch(() => null);
   const parsed = patchSchema.safeParse(body);
@@ -87,7 +82,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 }
 
 export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
-  if (!(await requireAuth())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireAdminApi();
+  if (!auth.ok) return auth.response;
+
   const existing = await prisma.booking.findUnique({ where: { id: params.id } });
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
   await prisma.booking.delete({ where: { id: params.id } });

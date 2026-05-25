@@ -1,12 +1,14 @@
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/db";
 import { USER_COOKIE_NAME, verifyUserSession } from "@/lib/user-auth";
+import { isAdminEmail } from "@/lib/admin-rbac";
 
 export type CurrentUser = {
   id: string;
   email: string;
   name: string;
   phone: string | null;
+  isAdmin: boolean;
 };
 
 export async function getCurrentUser(): Promise<CurrentUser | null> {
@@ -18,7 +20,8 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
       where: { id: userId },
       select: { id: true, email: true, name: true, phone: true },
     });
-    return user;
+    if (!user) return null;
+    return { ...user, isAdmin: isAdminEmail(user.email) };
   } catch {
     return null;
   }

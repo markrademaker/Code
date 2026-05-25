@@ -170,7 +170,7 @@ export function AdminDashboard({ bookings: initial }: { bookings: AdminBooking[]
   }
 
   async function logout(): Promise<void> {
-    await fetch("/api/admin/logout", { method: "POST" });
+    await fetch("/api/auth/logout", { method: "POST" });
     window.location.href = "/";
   }
 

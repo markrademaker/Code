@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ADMIN_COOKIE_NAME, verifySessionCookie } from "@/lib/admin-auth";
 import { USER_COOKIE_NAME, verifyUserSessionEdge } from "@/lib/user-session-edge";
 
 // Pages crawlers + anonymous visitors can see without signing in.
@@ -22,25 +21,26 @@ const REQUIRES_USER_PREFIXES = [
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // Old admin password page is gone — anyone landing there
+  // gets bounced to the dashboard (which then runs requireAdmin).
+  if (pathname === "/admin/login") {
+    const url = req.nextUrl.clone();
+    url.pathname = "/admin";
+    return NextResponse.redirect(url);
+  }
+
   if (pathname.startsWith("/admin")) {
-    // Admin requires two things: a signed-in user account first,
-    // then a separate admin password. Stops anyone from typing
-    // /admin and going straight to the password prompt.
-    const adminUserCookie = req.cookies.get(USER_COOKIE_NAME)?.value;
-    const adminUserId = await verifyUserSessionEdge(adminUserCookie);
-    if (!adminUserId) {
+    // Admin access is RBAC: must be signed in as a regular user.
+    // The page itself (via requireAdmin) checks the email allow-list.
+    const userCookie = req.cookies.get(USER_COOKIE_NAME)?.value;
+    const userId = await verifyUserSessionEdge(userCookie);
+    if (!userId) {
       const url = req.nextUrl.clone();
       url.pathname = "/login";
       url.searchParams.set("next", pathname);
       return NextResponse.redirect(url);
     }
-    if (pathname === "/admin/login") return NextResponse.next();
-    const cookie = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
-    if (await verifySessionCookie(cookie)) return NextResponse.next();
-    const url = req.nextUrl.clone();
-    url.pathname = "/admin/login";
-    url.searchParams.set("next", pathname);
-    return NextResponse.redirect(url);
+    return NextResponse.next();
   }
 
   if (PUBLIC_PATHS.has(pathname)) return NextResponse.next();
