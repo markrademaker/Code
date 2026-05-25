@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function PhotosPage() {
   return (
-    <SiteShell>
+    <SiteShell slideshowCount={2}>
       <div className="pt-12 pb-24 sm:pt-16 sm:pb-32">
         <section className="relative mx-auto max-w-7xl px-5 sm:px-8">
           <Frost strength={80} className="p-8 sm:p-12 lg:p-16">
