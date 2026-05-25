@@ -77,6 +77,15 @@ export function BookingFlow({
     }
   }
 
+  if (!user) {
+    return (
+      <BookingForm
+        user={null}
+        frostStrength={frostStrength}
+      />
+    );
+  }
+
   return (
     <>
       <AvailabilityCalendar
