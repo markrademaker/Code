@@ -70,13 +70,13 @@ export default async function PayPage({ params }: { params: { id: string } }) {
               <h1 className="font-display text-4xl font-light leading-[1.05] tracking-tightish text-ink sm:text-5xl lg:text-7xl">
                 {booking.totalAmountCents != null ? (
                   <>
-                    <span className="italic text-terracotta">Pay</span>{" "}
+                    <span className="text-terracotta">Pay</span>{" "}
                     {formatEuro(booking.totalAmountCents)}.
                   </>
                 ) : (
                   <>
                     Total{" "}
-                    <span className="italic text-terracotta">to be</span>
+                    <span className="text-terracotta">to be</span>
                     <br />
                     confirmed.
                   </>

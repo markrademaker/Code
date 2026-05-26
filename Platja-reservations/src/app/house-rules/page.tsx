@@ -72,7 +72,7 @@ export default function HouseRulesPage() {
         <h1 className="font-display text-4xl font-light leading-[1.05] tracking-tightish text-ink sm:text-5xl lg:text-7xl">
           House
           <br />
-          <span className="italic text-terracotta">rules</span>.
+          <span className="text-terracotta">rules</span>.
         </h1>
         <p className="text-base leading-relaxed text-ink/75 sm:text-lg lg:pb-3">
           Nothing scary — just the things that keep the villa and the

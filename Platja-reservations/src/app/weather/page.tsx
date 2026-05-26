@@ -31,7 +31,7 @@ export default async function WeatherPage() {
 
             <div className="mt-10 grid gap-10 lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-20">
               <h1 className="font-display text-4xl font-light leading-[1.05] tracking-tightish text-ink sm:text-5xl lg:text-7xl">
-                Sun, <span className="italic text-terracotta">sea</span>,
+                Sun, <span className="text-terracotta">sea</span>,
                 <br />
                 and the in-between.
               </h1>
