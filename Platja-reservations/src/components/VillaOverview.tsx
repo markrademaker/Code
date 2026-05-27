@@ -22,7 +22,7 @@ export function VillaOverview({ frostStrength = 80 }: { frostStrength?: number }
             <br />
             <span>pine</span>, and the
             <br />
-            bay <span className="italic">below</span>.
+            bay <span>below</span>.
           </h2>
 
           <div className="lg:pb-3">
