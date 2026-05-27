@@ -19,9 +19,9 @@ export function Hero() {
           >
             White walls,
             <br />
-            <span className="italic text-sunset">pine</span>, and the
+            <span>pine</span>, and the
             <br />
-            bay <span className="italic">below</span>.
+            bay <span>below</span>.
           </h1>
           <p
             className="mt-8 max-w-xl text-base leading-relaxed text-whitewash/90 sm:text-lg"
