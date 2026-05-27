@@ -90,7 +90,7 @@ export function BookingForm({
               <h2 className="mt-4 font-display text-4xl font-light leading-[1.05] tracking-tightish sm:text-5xl">
                 Sign in to book
                 <br />
-                <span className="text-terracotta">in seconds</span>.
+                <span>in seconds</span>.
               </h2>
               <p className="mt-5 text-base text-ink/70 sm:text-lg">
                 We save your name, email, and phone — so next time you only
@@ -165,7 +165,7 @@ export function BookingForm({
         <aside className="lg:self-start">
           <SectionMark number="III" label="Reserve" />
           <h2 className="mt-4 font-display text-4xl font-light leading-[1.05] tracking-tightish sm:text-5xl lg:text-6xl">
-            Request <span className="text-terracotta">your</span>
+            Request <span>your</span>
             <br />
             dates.
           </h2>

@@ -37,7 +37,7 @@ export default function BookingActionPage({
       <div className="mt-10 grid gap-10 lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-20">
         <h1 className="font-display text-4xl font-light leading-[1.05] tracking-tightish text-ink sm:text-5xl lg:text-7xl">
           {m.title}
-          <span className="text-terracotta">.</span>
+          <span>.</span>
         </h1>
         <p className="text-base leading-relaxed text-ink/75 sm:text-lg lg:pb-3">
           {m.body(searchParams.guest, searchParams.status)}

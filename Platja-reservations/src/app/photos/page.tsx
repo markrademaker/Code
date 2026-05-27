@@ -20,7 +20,7 @@ export default function PhotosPage() {
 
             <div className="mt-10 grid gap-10 lg:grid-cols-[1.45fr_1fr] lg:items-end lg:gap-20">
               <h1 className="font-display text-4xl font-light leading-[1.05] tracking-tightish text-ink sm:text-5xl lg:text-7xl">
-                A <span className="text-terracotta">moment</span>,
+                A <span>moment</span>,
                 <br />
                 coming soon.
               </h1>

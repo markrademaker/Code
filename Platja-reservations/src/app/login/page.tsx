@@ -110,13 +110,13 @@ export default function LoginPage({
               <>
                 Create your
                 <br />
-                <span className="text-terracotta">account</span>.
+                <span>account</span>.
               </>
             ) : (
               <>
                 Welcome
                 <br />
-                <span className="text-terracotta">back</span>.
+                <span>back</span>.
               </>
             )}
           </h1>
