@@ -20,7 +20,7 @@ export function VillaOverview({ frostStrength = 80 }: { frostStrength?: number }
           <h2 className="font-display text-4xl font-light leading-[1.05] tracking-tightish text-ink sm:text-5xl lg:text-7xl">
             White walls,
             <br />
-            <span className="text-terracotta">pine</span>, and the
+            <span>pine</span>, and the
             <br />
             bay <span className="italic">below</span>.
           </h2>

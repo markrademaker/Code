@@ -154,7 +154,7 @@ export function AvailabilityCalendar({
           <div className="max-w-xl">
             <SectionMark number="II" label="When are you free?" />
             <h2 className="mt-4 font-display text-4xl font-light leading-[1.05] tracking-tightish sm:text-5xl lg:text-6xl">
-              Pick a <span className="text-terracotta">week</span>.
+              Pick a <span>week</span>.
             </h2>
             {onDateClick && (
               <p className="mt-3 text-sm text-ink/60">

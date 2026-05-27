@@ -59,7 +59,7 @@ export default async function MyBookingsPage() {
               <h1 className="font-display text-4xl font-light leading-[1.05] tracking-tightish text-ink sm:text-5xl lg:text-7xl">
                 My
                 <br />
-                <span className="text-terracotta">bookings</span>.
+                <span>bookings</span>.
               </h1>
               <p className="text-base leading-relaxed text-ink/75 sm:text-lg lg:pb-3">
                 Every request you&apos;ve made and where it stands. You can

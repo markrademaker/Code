@@ -23,7 +23,7 @@ export function Nearby({ frostStrength = 80 }: { frostStrength?: number }) {
         <SectionMark number="IV" label="Nearby" />
         <h2 className="mt-8 font-display text-4xl font-light leading-[1.05] tracking-tightish sm:text-5xl">
           A few minutes{" "}
-          <span className="text-terracotta">from the door</span>.
+          <span>from the door</span>.
         </h2>
         <div className="mt-10 grid gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
           {PLACES.map((p) => (

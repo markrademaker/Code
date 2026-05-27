@@ -43,7 +43,7 @@ export default async function RestaurantsPage() {
         <h1 className="font-display text-4xl font-light leading-[1.05] tracking-tightish text-ink sm:text-5xl lg:text-7xl">
           The
           <br />
-          <span className="text-terracotta">restaurant</span> book.
+          <span>restaurant</span> book.
         </h1>
         <p className="text-base leading-relaxed text-ink/75 sm:text-lg lg:pb-3">
           Our favourite places to eat around the villa. Book a couple of days
